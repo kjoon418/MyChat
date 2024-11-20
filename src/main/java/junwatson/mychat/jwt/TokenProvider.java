@@ -129,7 +129,7 @@ public class TokenProvider {
         return tokenType == TokenType.valueOf(tokenTypeClaim);
     }
 
-    private Claims parseClaims(String accessToken) {
+    public Claims parseClaims(String accessToken) {
         log.info("TokenProvider.parseClaims() called");
 
         try {

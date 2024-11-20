@@ -1,8 +1,12 @@
 package junwatson.mychat.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.RefreshToken;
+import junwatson.mychat.exception.IllegalRefreshTokenException;
+import junwatson.mychat.exception.MemberNotExistsException;
+import junwatson.mychat.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -18,6 +22,7 @@ public class MemberRepository {
 
     private final EntityManager em;
     private final RefreshTokenDao refreshTokenDao;
+    private final TokenProvider tokenProvider;
 
     public Optional<Member> findByEmail(String email) {
         log.info("MemberRepository.findByEmail() called");
@@ -49,5 +54,18 @@ public class MemberRepository {
         RefreshToken refreshToken = refreshTokenDao.createRefreshToken(member);
 
         return refreshToken.getToken();
+    }
+
+    public String reissueAccessToken(HttpServletRequest request) {
+        String token = tokenProvider.resolveToken(request);
+
+        Member member = findById(Long.parseLong(tokenProvider.parseClaims(token).getSubject()))
+                .orElseThrow(() -> new MemberNotExistsException("해당 토큰으로 회원을 조회할 수 없습니다."));
+
+        if (!refreshTokenDao.isValidateRefreshToken(member, token)) {
+            throw new IllegalRefreshTokenException("부적절한 리프레시 토큰입니다.");
+        }
+
+        return tokenProvider.createAccessToken(member);
     }
 }

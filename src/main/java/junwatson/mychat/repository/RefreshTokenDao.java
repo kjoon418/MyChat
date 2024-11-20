@@ -5,6 +5,7 @@ import junwatson.mychat.domain.RefreshToken;
 import junwatson.mychat.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,5 +22,15 @@ public class RefreshTokenDao {
         member.setRefreshToken(refreshToken);
 
         return refreshToken;
+    }
+
+    public boolean isValidateRefreshToken(Member member, String token) {
+        if (member == null || member.getRefreshToken() == null) {
+            return false;
+        }
+
+        return member.getRefreshToken()
+                .getToken()
+                .equals(token);
     }
 }
