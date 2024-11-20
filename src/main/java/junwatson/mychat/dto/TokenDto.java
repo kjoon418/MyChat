@@ -12,4 +12,7 @@ public class TokenDto {
 
     @SerializedName("access_token")
     private String accessToken;
+
+    @SerializedName("refresh_token")
+    private String refreshToken;
 }

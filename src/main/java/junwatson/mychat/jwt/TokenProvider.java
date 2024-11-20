@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Member;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,9 +22,11 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class TokenProvider {
 
     private static final String ROLE_CLAIM = "Role";
+    private static final String TOKEN_TYPE_CLAIM = "Junwatson/MyChat/TokenType";
     private static final String BEARER = "Bearer ";
     private static final String AUTHORIZATION = "Authorization";
 
@@ -38,6 +41,8 @@ public class TokenProvider {
     }
 
     public String createAccessToken(Member member) {
+        log.info("TokenProvider.createAccessToken() called");
+
         long nowTime = (new Date().getTime());
 
         Date accessTokenExpiredTime = new Date(nowTime + accessTokenValidityTime);
@@ -45,12 +50,31 @@ public class TokenProvider {
         return Jwts.builder()
                 .setSubject(member.getId().toString())
                 .claim(ROLE_CLAIM, member.getRole().name())
+                .claim(TOKEN_TYPE_CLAIM, TokenType.ACCESS)
+                .setExpiration(accessTokenExpiredTime)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String createRefreshToken(Member member) {
+        log.info("TokenProvider.createRefreshToken() called");
+
+        long nowTime = (new Date().getTime());
+
+        Date accessTokenExpiredTime = new Date(nowTime + (accessTokenValidityTime * 24));
+
+        return Jwts.builder()
+                .setSubject(member.getId().toString())
+                .claim(ROLE_CLAIM, member.getRole().name())
+                .claim(TOKEN_TYPE_CLAIM, TokenType.REFRESH)
                 .setExpiration(accessTokenExpiredTime)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public Authentication getAuthentication(String accessToken) {
+        log.info("TokenProvider.getAuthentication() called");
+
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(ROLE_CLAIM) == null) {
@@ -71,6 +95,8 @@ public class TokenProvider {
     }
 
     public String resolveToken(HttpServletRequest request) { //토큰 분해/분석
+        log.info("TokenProvider.resolveToken() called");
+
         String bearerToken = request.getHeader(AUTHORIZATION);
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
@@ -81,6 +107,8 @@ public class TokenProvider {
     }
 
     public boolean validateToken(String token) {
+        log.info("TokenProvider.validateToken() called");
+
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -92,7 +120,18 @@ public class TokenProvider {
         }
     }
 
+    public boolean hasProperType(String token, TokenType tokenType) {
+        log.info("TokenProvider.hasProperType() called");
+
+        Claims claims = parseClaims(token);
+        String tokenTypeClaim = (String) claims.get(TOKEN_TYPE_CLAIM);
+
+        return tokenType == TokenType.valueOf(tokenTypeClaim);
+    }
+
     private Claims parseClaims(String accessToken) {
+        log.info("TokenProvider.parseClaims() called");
+
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)

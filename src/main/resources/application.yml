@@ -18,3 +18,8 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   access-token-validity-in-milliseconds: ${ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS}
+
+oauth:
+  client-id: ${OAUTH_CLIENT_ID}
+  client-secret: ${OAUTH_CLIENT_SECRET}
+  redirect-url: ${GOOGLE_REDIRECT_URL}

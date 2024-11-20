@@ -2,10 +2,7 @@ package junwatson.mychat.domain;
 
 import jakarta.persistence.*;
 import junwatson.mychat.domain.type.MemberRole;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +31,7 @@ public class Member {
     private Long id;
 
     @OneToOne(orphanRemoval = true, fetch = LAZY, cascade = ALL)
+    @Setter
     private RefreshToken refreshToken;
 
     @OneToMany(mappedBy = "member", fetch = LAZY)
