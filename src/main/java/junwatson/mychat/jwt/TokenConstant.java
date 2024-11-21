@@ -13,7 +13,7 @@ import java.security.Key;
 public class TokenConstant {
 
     public static final String ROLE_CLAIM = "Role";
-    public static final String TOKEN_TYPE_CLAIM = "Junwatson/MyChat/TokenType";
+    public static final String TOKEN_TYPE_CLAIM = "JunWatson/MyChat/TokenType";
     public static final String BEARER = "Bearer ";
     public static final String AUTHORIZATION = "Authorization";
 
