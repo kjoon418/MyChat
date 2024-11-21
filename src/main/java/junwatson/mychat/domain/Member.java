@@ -34,23 +34,24 @@ public class Member {
     @Setter
     private RefreshToken refreshToken;
 
+    @OneToMany(fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    private final List<Friendship> friendships = new ArrayList<>();
+
+    @OneToMany(mappedBy = "requestMember", fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    private final List<FriendshipRequest> sentFriendshipRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "responseMember", fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    private final List<FriendshipRequest> receivedFriendshipRequests = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", fetch = LAZY)
-    private List<Friendship> friendships = new ArrayList<>();
-
-    @OneToMany(mappedBy = "requestMember", fetch = LAZY)
-    private List<FriendshipRequest> sentFriendshipRequests = new ArrayList<>();
-
-    @OneToMany(mappedBy = "responseMember", fetch = LAZY)
-    private List<FriendshipRequest> receivedFriendshipRequests = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", fetch = LAZY)
-    private List<MemberChatRoom> memberChatRooms = new ArrayList<>();
+    private final List<MemberChatRoom> memberChatRooms = new ArrayList<>();
 
     @Enumerated(STRING)
     private MemberRole role;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(nullable = false)
     private String name;
     private String profileUrl;
 }

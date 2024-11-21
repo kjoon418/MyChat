@@ -7,6 +7,9 @@ import junwatson.mychat.domain.RefreshToken;
 import junwatson.mychat.exception.IllegalRefreshTokenException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
+import junwatson.mychat.repository.dao.FriendshipDao;
+import junwatson.mychat.repository.dao.FriendshipRequestDao;
+import junwatson.mychat.repository.dao.RefreshTokenDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -21,8 +24,10 @@ import java.util.Optional;
 public class MemberRepository {
 
     private final EntityManager em;
-    private final RefreshTokenDao refreshTokenDao;
     private final TokenProvider tokenProvider;
+    private final RefreshTokenDao refreshTokenDao;
+    private final FriendshipRequestDao friendshipRequestDao;
+    private final FriendshipDao friendshipDao;
 
     public Optional<Member> findByEmail(String email) {
         log.info("MemberRepository.findByEmail() called");
@@ -67,5 +72,21 @@ public class MemberRepository {
         }
 
         return tokenProvider.createAccessToken(member);
+    }
+
+    public boolean isExistFriendshipRequest(Member member, Member friend) {
+        return friendshipRequestDao.isRequestExists(member, friend);
+    }
+
+    public void createFriendshipRequest(Member member, Member friend) {
+        friendshipRequestDao.createFriendshipRequest(member, friend);
+    }
+
+    public void removeFriendshipRequest(Member member, Member friend) {
+        friendshipRequestDao.removeRequest(member, friend);
+    }
+
+    public void createFriendship(Member member, Member friend) {
+        friendshipDao.createFriendship(member, friend);
     }
 }

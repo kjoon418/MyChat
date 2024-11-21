@@ -1,11 +1,10 @@
-package junwatson.mychat.repository;
+package junwatson.mychat.repository.dao;
 
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.RefreshToken;
 import junwatson.mychat.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 @Repository
 @RequiredArgsConstructor
