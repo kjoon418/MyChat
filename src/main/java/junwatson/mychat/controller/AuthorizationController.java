@@ -55,6 +55,6 @@ public class AuthorizationController {
 
         TokenDto responseDto = memberService.signIn(requestDto);
 
-        return ResponseEntity.status(CREATED).body(responseDto);
+        return ResponseEntity.ok(responseDto);
     }
 }
