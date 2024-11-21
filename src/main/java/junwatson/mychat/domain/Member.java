@@ -18,14 +18,6 @@ import static lombok.AccessLevel.*;
 @Getter
 public class Member {
 
-    @Builder
-    private Member(MemberRole role, String email, String name, String profileUrl) {
-        this.role = role;
-        this.email = email;
-        this.name = name;
-        this.profileUrl = profileUrl;
-    }
-
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -51,7 +43,18 @@ public class Member {
 
     @Column(unique = true, nullable = false)
     private String email;
+
     @Column(nullable = false)
     private String name;
+    private String password;
     private String profileUrl;
+
+    @Builder
+    private Member(MemberRole role, String email, String name, String password, String profileUrl) {
+        this.role = role;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.profileUrl = profileUrl;
+    }
 }
