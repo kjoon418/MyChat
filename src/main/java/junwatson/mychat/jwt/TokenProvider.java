@@ -21,54 +21,25 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import static junwatson.mychat.jwt.TokenConstant.*;
+
 @Component
 @Slf4j
 public class TokenProvider {
-
-    private static final String ROLE_CLAIM = "Role";
-    private static final String TOKEN_TYPE_CLAIM = "Junwatson/MyChat/TokenType";
-    private static final String BEARER = "Bearer ";
-    private static final String AUTHORIZATION = "Authorization";
-
-    private final Key key;
-    private final long accessTokenValidityTime;
-
-    public TokenProvider(@Value("${jwt.secret}") String secretKey,
-                         @Value("${jwt.access-token-validity-in-milliseconds}") long accessTokenValidityTime) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenValidityTime = accessTokenValidityTime;
-    }
 
     public String createAccessToken(Member member) {
         log.info("TokenProvider.createAccessToken() called");
 
         long nowTime = (new Date().getTime());
 
-        Date accessTokenExpiredTime = new Date(nowTime + accessTokenValidityTime);
+        Date accessTokenExpiredTime = new Date(nowTime + ACCESS_TOKEN_VALIDITY_TIME);
 
         return Jwts.builder()
                 .setSubject(member.getId().toString())
                 .claim(ROLE_CLAIM, member.getRole().name())
                 .claim(TOKEN_TYPE_CLAIM, TokenType.ACCESS)
                 .setExpiration(accessTokenExpiredTime)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    public String createRefreshToken(Member member) {
-        log.info("TokenProvider.createRefreshToken() called");
-
-        long nowTime = (new Date().getTime());
-
-        Date accessTokenExpiredTime = new Date(nowTime + (accessTokenValidityTime * 24));
-
-        return Jwts.builder()
-                .setSubject(member.getId().toString())
-                .claim(ROLE_CLAIM, member.getRole().name())
-                .claim(TOKEN_TYPE_CLAIM, TokenType.REFRESH)
-                .setExpiration(accessTokenExpiredTime)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -111,7 +82,7 @@ public class TokenProvider {
 
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(KEY)
                     .build()
                     .parseClaimsJws(token);
             return true;
@@ -134,7 +105,7 @@ public class TokenProvider {
 
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(KEY)
                     .build()
                     .parseClaimsJws(accessToken)
                     .getBody();

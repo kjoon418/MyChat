@@ -1,4 +1,4 @@
-package junwatson.mychat.dto;
+package junwatson.mychat.dto.response;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
