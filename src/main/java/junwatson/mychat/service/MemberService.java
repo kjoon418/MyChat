@@ -1,8 +1,11 @@
 package junwatson.mychat.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.MemberSignInRequestDto;
+import junwatson.mychat.dto.request.SearchFriendsRequestDto;
+import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.dto.request.CreateFriendshipRequestDto;
 import junwatson.mychat.dto.request.MemberSignUpRequestDto;
@@ -12,6 +15,7 @@ import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.repository.MemberRepository;
+import junwatson.mychat.repository.condition.MemberSearchCondition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -103,6 +107,33 @@ public class MemberService {
         return CreateFriendshipResponseDto.from(friend);
     }
 
+    public List<MemberInfoResponseDto> findAllFriends(Member member) {
+        List<Friendship> friendships = memberRepository.searchFriendships(member, MemberSearchCondition.noCondition());
+
+        return friendships.stream()
+                .map(Friendship::getFriendMember)
+                .map(MemberInfoResponseDto::from)
+                .toList();
+    }
+
+    public List<MemberInfoResponseDto> searchAllFriends(Member member) {
+        List<Friendship> friendships = memberRepository.searchFriendships(member, MemberSearchCondition.noCondition());
+
+        return friendships.stream()
+                .map(Friendship::getFriendMember)
+                .map(MemberInfoResponseDto::from)
+                .toList();
+    }
+
+    public List<MemberInfoResponseDto> searchFriendsByCondition(Member member, SearchFriendsRequestDto requestDto) {
+        List<Friendship> friendships = memberRepository.searchFriendships(member, requestDto.toCondition());
+
+        return friendships.stream()
+                .map(Friendship::getFriendMember)
+                .map(MemberInfoResponseDto::from)
+                .toList();
+    }
+
     private boolean validate(Member member) {
         log.info("MemberService.validate() called");
 
@@ -129,6 +160,8 @@ public class MemberService {
     }
 
     private boolean isIllegalString(String string) {
+        log.info("MemberService.isIllegalString() called");
+
         for (int i = 0; i < string.length(); i++) {
             char word = string.charAt(i);
             if (Character.isAlphabetic(word) || Character.isDigit(word)) {

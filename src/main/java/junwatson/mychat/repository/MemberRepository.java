@@ -2,11 +2,13 @@ package junwatson.mychat.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
+import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.RefreshToken;
 import junwatson.mychat.exception.IllegalRefreshTokenException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
+import junwatson.mychat.repository.condition.MemberSearchCondition;
 import junwatson.mychat.repository.dao.FriendshipDao;
 import junwatson.mychat.repository.dao.FriendshipRequestDao;
 import junwatson.mychat.repository.dao.RefreshTokenDao;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -88,5 +91,9 @@ public class MemberRepository {
 
     public void createFriendship(Member member, Member friend) {
         friendshipDao.createFriendship(member, friend);
+    }
+
+    public List<Friendship> searchFriendships(Member member, MemberSearchCondition condition) {
+        return friendshipDao.searchFriendships(member, condition);
     }
 }
