@@ -1,8 +1,6 @@
 package junwatson.mychat.dto.request;
 
 import junwatson.mychat.repository.condition.MemberSearchCondition;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +8,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
 @Getter
-public class SearchFriendsRequestDto {
+public class SearchFriendRequestDto {
 
     private String name;
     private String email;

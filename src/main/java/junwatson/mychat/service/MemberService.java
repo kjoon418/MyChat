@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.MemberSignInRequestDto;
-import junwatson.mychat.dto.request.SearchFriendsRequestDto;
+import junwatson.mychat.dto.request.SearchFriendRequestDto;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.dto.request.CreateFriendshipRequestDto;
@@ -107,8 +107,8 @@ public class MemberService {
         return CreateFriendshipResponseDto.from(friend);
     }
 
-    public List<MemberInfoResponseDto> findAllFriends(Member member) {
-        List<Friendship> friendships = memberRepository.searchFriendships(member, MemberSearchCondition.noCondition());
+    public List<MemberInfoResponseDto> findAllFriend(Member member) {
+        List<Friendship> friendships = memberRepository.searchFriendship(member, MemberSearchCondition.noCondition());
 
         return friendships.stream()
                 .map(Friendship::getFriendMember)
@@ -116,17 +116,8 @@ public class MemberService {
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> searchAllFriends(Member member) {
-        List<Friendship> friendships = memberRepository.searchFriendships(member, MemberSearchCondition.noCondition());
-
-        return friendships.stream()
-                .map(Friendship::getFriendMember)
-                .map(MemberInfoResponseDto::from)
-                .toList();
-    }
-
-    public List<MemberInfoResponseDto> searchFriendsByCondition(Member member, SearchFriendsRequestDto requestDto) {
-        List<Friendship> friendships = memberRepository.searchFriendships(member, requestDto.toCondition());
+    public List<MemberInfoResponseDto> searchFriendByCondition(Member member, SearchFriendRequestDto requestDto) {
+        List<Friendship> friendships = memberRepository.searchFriendship(member, requestDto.toCondition());
 
         return friendships.stream()
                 .map(Friendship::getFriendMember)

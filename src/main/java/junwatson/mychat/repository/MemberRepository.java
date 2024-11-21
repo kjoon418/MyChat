@@ -93,7 +93,7 @@ public class MemberRepository {
         friendshipDao.createFriendship(member, friend);
     }
 
-    public List<Friendship> searchFriendships(Member member, MemberSearchCondition condition) {
+    public List<Friendship> searchFriendship(Member member, MemberSearchCondition condition) {
         return friendshipDao.searchFriendships(member, condition);
     }
 }

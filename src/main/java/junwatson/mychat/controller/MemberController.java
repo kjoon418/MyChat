@@ -2,7 +2,7 @@ package junwatson.mychat.controller;
 
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.CreateFriendshipRequestDto;
-import junwatson.mychat.dto.request.SearchFriendsRequestDto;
+import junwatson.mychat.dto.request.SearchFriendRequestDto;
 import junwatson.mychat.dto.response.CreateFriendshipResponseDto;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.service.MemberService;
@@ -36,24 +36,25 @@ public class MemberController {
     }
 
     @GetMapping("/friend")
-    public ResponseEntity<List<MemberInfoResponseDto>> findAllFriends(Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> findAllFriend(Principal principal) {
         log.info("MemberController.findAllFriends() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        List<MemberInfoResponseDto> responseDto = memberService.searchAllFriends(member);
+        List<MemberInfoResponseDto> responseDto = memberService.findAllFriend(member);
 
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/friend/search")
-    public ResponseEntity<List<MemberInfoResponseDto>> searchFriends(@RequestBody SearchFriendsRequestDto requestDto, Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> searchFriend(@RequestBody SearchFriendRequestDto requestDto, Principal principal) {
         log.info("MemberController.searchFriends() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        List<MemberInfoResponseDto> responseDto = memberService.searchFriendsByCondition(member, requestDto);
+        List<MemberInfoResponseDto> responseDto = memberService.searchFriendByCondition(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }
+
 }
