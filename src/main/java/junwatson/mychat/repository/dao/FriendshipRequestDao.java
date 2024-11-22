@@ -24,12 +24,20 @@ public class FriendshipRequestDao {
         return member.getReceivedFriendshipRequests();
     }
 
-    public boolean isFriendshipRequestExists(Member member, Member friend) {
-        log.info("FriendshipRequestDao.isRequestExists() called");
+    public boolean isReceivedFriendshipRequestExists(Member member, Member friend) {
+        log.info("FriendshipRequestDao.isReceivedFriendshipRequestExists() called");
 
         return member.getReceivedFriendshipRequests()
                 .stream()
-                .anyMatch((request) -> request.getRequestMember().equals(friend));
+                .anyMatch((request) -> request.getResponseMember().equals(friend));
+    }
+
+    public boolean isSentFriendshipRequestExists(Member member, Member friend) {
+        log.info("FriendshipRequestDao.isSentFriendshipRequestExists() called");
+
+        return member.getSentFriendshipRequests()
+                .stream()
+                .anyMatch((request) -> request.getResponseMember().equals(friend));
     }
 
     public void createFriendshipRequest(Member member, Member friend) {

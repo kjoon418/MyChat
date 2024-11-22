@@ -1,6 +1,7 @@
 package junwatson.mychat.controller;
 
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.dto.request.BlacklistInfoRequestDto;
 import junwatson.mychat.dto.request.CreateFriendshipRequestDto;
 import junwatson.mychat.dto.request.SearchFriendRequestDto;
 import junwatson.mychat.dto.request.SearchMemberRequestDto;
@@ -87,6 +88,28 @@ public class MemberController {
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
         List<MemberInfoResponseDto> responseDto = memberService.searchMembersByCondition(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/blacklist")
+    public ResponseEntity<MemberInfoResponseDto> addBlacklist(@RequestBody BlacklistInfoRequestDto requestDto, Principal principal) {
+        log.info("MemberController.createBlacklist() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        MemberInfoResponseDto responseDto = memberService.addBlacklist(member, requestDto);
+
+        return ResponseEntity.status(CREATED).body(responseDto);
+    }
+
+    @DeleteMapping("/blacklist")
+    public ResponseEntity<MemberInfoResponseDto> deleteBlacklist(@RequestBody BlacklistInfoRequestDto requestDto, Principal principal) {
+        log.info("MemberController.deleteBlacklist() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        MemberInfoResponseDto responseDto = memberService.removeBlacklist(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }

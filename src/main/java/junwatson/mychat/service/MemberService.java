@@ -1,6 +1,7 @@
 package junwatson.mychat.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import junwatson.mychat.domain.Blacklist;
 import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.FriendshipRequest;
 import junwatson.mychat.domain.Member;
@@ -96,7 +97,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotExistsException("해당 이메일을 지닌 회원이 존재하지 않습니다."));
 
         // 이미 상대 측에게로부터 친구 요청이 와 있었다면, 둘을 친구로 등록한다
-        if (memberRepository.isExistFriendshipRequest(member, friend)) {
+        if (memberRepository.isReceivedFriendshipRequestExists(member, friend)) {
             memberRepository.removeFriendshipRequest(friend, member);
             memberRepository.createFriendship(member, friend);
         } else {
@@ -163,6 +164,37 @@ public class MemberService {
         return sentFriendshipRequest.stream()
                 .map((friendshipRequest) -> MemberInfoResponseDto.from(friendshipRequest.getRequestMember()))
                 .toList();
+    }
+
+    public MemberInfoResponseDto addBlacklist(Member member, BlacklistInfoRequestDto requestDto) {
+        log.info("MemberService.addBlacklist() called");
+
+        String targetEmail = requestDto.getEmail();
+        Member target = memberRepository.findByEmail(targetEmail)
+                .orElseThrow(() -> new MemberNotExistsException("대상 회원이 존재하지 않습니다."));
+        Blacklist blacklist = memberRepository.addBlacklist(member, target);
+
+        // 만약 기존에 친구 관계였다면, 친구 관계를 삭제함
+        if (memberRepository.areFriends(member, target)) {
+            memberRepository.removeFriendship(member, target);
+        }
+        // 만약 기존에 친구 요청을 보냈었다면, 친구 요청을 삭제함
+        if (memberRepository.isSentFriendshipRequestExists(member, target)) {
+            memberRepository.removeFriendshipRequest(member, target);
+        }
+
+        return MemberInfoResponseDto.from(blacklist.getTargetMember());
+    }
+
+    public MemberInfoResponseDto removeBlacklist(Member member, BlacklistInfoRequestDto requestDto) {
+        log.info("MemberService.removeBlacklist() called");
+
+        String targetEmail = requestDto.getEmail();
+        Member target = memberRepository.findByEmail(targetEmail)
+                .orElseThrow(() -> new MemberNotExistsException("대상 회원이 존재하지 않습니다."));
+        Blacklist blacklist = memberRepository.removeBlacklist(member, target);
+
+        return MemberInfoResponseDto.from(blacklist.getTargetMember());
     }
 
     private boolean validate(Member member) {

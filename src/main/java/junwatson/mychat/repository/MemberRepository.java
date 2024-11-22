@@ -4,14 +4,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
-import junwatson.mychat.domain.Friendship;
-import junwatson.mychat.domain.FriendshipRequest;
-import junwatson.mychat.domain.Member;
-import junwatson.mychat.domain.RefreshToken;
+import junwatson.mychat.domain.*;
 import junwatson.mychat.exception.IllegalRefreshTokenException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.repository.condition.MemberSearchCondition;
+import junwatson.mychat.repository.dao.BlacklistDao;
 import junwatson.mychat.repository.dao.FriendshipDao;
 import junwatson.mychat.repository.dao.FriendshipRequestDao;
 import junwatson.mychat.repository.dao.RefreshTokenDao;
@@ -32,18 +30,20 @@ public class MemberRepository {
 
     private final EntityManager em;
     private final TokenProvider tokenProvider;
+    private final JPAQueryFactory query;
     private final RefreshTokenDao refreshTokenDao;
     private final FriendshipRequestDao friendshipRequestDao;
     private final FriendshipDao friendshipDao;
-    private final JPAQueryFactory query;
+    private final BlacklistDao blacklistDao;
 
-    public MemberRepository(EntityManager em, TokenProvider tokenProvider, RefreshTokenDao refreshTokenDao, FriendshipRequestDao friendshipRequestDao, FriendshipDao friendshipDao) {
+    public MemberRepository(EntityManager em, TokenProvider tokenProvider, RefreshTokenDao refreshTokenDao, FriendshipRequestDao friendshipRequestDao, FriendshipDao friendshipDao, BlacklistDao blacklistDao) {
         this.em = em;
         this.tokenProvider = tokenProvider;
+        this.query = new JPAQueryFactory(em);
         this.refreshTokenDao = refreshTokenDao;
         this.friendshipRequestDao = friendshipRequestDao;
         this.friendshipDao = friendshipDao;
-        this.query = new JPAQueryFactory(em);
+        this.blacklistDao = blacklistDao;
     }
 
     public Optional<Member> findByEmail(String email) {
@@ -95,10 +95,16 @@ public class MemberRepository {
         return tokenProvider.createAccessToken(member);
     }
 
-    public boolean isExistFriendshipRequest(Member member, Member friend) {
-        log.info("MemberRepository.isExistFriendshipRequest() called");
+    public boolean isReceivedFriendshipRequestExists(Member member, Member friend) {
+        log.info("MemberRepository.isReceivedFriendshipRequestExists() called");
 
-        return friendshipRequestDao.isFriendshipRequestExists(member, friend);
+        return friendshipRequestDao.isReceivedFriendshipRequestExists(member, friend);
+    }
+
+    public boolean isSentFriendshipRequestExists(Member member, Member friend) {
+        log.info("MemberRepository.isSentFriendshipRequestExists() called");
+
+        return friendshipRequestDao.isSentFriendshipRequestExists(member, friend);
     }
 
     public List<FriendshipRequest> findSentFriendshipRequests(Member member) {
@@ -131,6 +137,18 @@ public class MemberRepository {
         friendshipDao.createFriendship(member, friend);
     }
 
+    public void removeFriendship(Member member, Member friend) {
+        log.info("MemberRepository.removeFriendship() called");
+
+        friendshipDao.removeFriendship(member, friend);
+    }
+
+    public boolean areFriends(Member member, Member friend) {
+        log.info("MemberRepository.areFriends() called");
+
+        return friendshipDao.areFriends(member, friend);
+    }
+
     public List<Friendship> searchFriendships(Member member, MemberSearchCondition condition) {
         log.info("MemberRepository.searchFriendship() called");
 
@@ -148,6 +166,18 @@ public class MemberRepository {
                 .from(member)
                 .where(likeEmail(email), likeName(name), differentId(id))
                 .fetch();
+    }
+
+    public Blacklist addBlacklist(Member member, Member target) {
+        log.info("MemberRepository.addBlacklist() called");
+
+        return blacklistDao.createBlacklist(member, target);
+    }
+
+    public Blacklist removeBlacklist(Member member, Member target) {
+        log.info("MemberRepository.removeBlacklist() called");
+
+        return blacklistDao.removeBlacklist(member, target);
     }
 
     private BooleanExpression likeName(String name) {

@@ -2,6 +2,7 @@ package junwatson.mychat.repository.dao;
 
 import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.repository.condition.MemberSearchCondition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -33,6 +34,25 @@ public class FriendshipDao {
         friendships2.add(friendship2);
     }
 
+    public void removeFriendship(Member member, Member friend) {
+        log.info("FriendshipDao.removeFriendship() called");
+
+        Friendship memberFriendship = member.getFriendships()
+                .stream()
+                .filter(friendship -> friendship.getFriendMember().equals(friend))
+                .findAny()
+                .orElseThrow(() -> new MemberNotExistsException("상대 회원과 친구 상태가 아닙니다."));
+
+        Friendship friendFriendship = friend.getFriendships()
+                .stream()
+                .filter(friendship -> friendship.getFriendMember().equals(member))
+                .findAny()
+                .orElseThrow(() -> new MemberNotExistsException("상대 회원과 친구 상태가 아닙니다."));
+
+        member.getFriendships().remove(memberFriendship);
+        friend.getFriendships().remove(friendFriendship);
+    }
+
     public List<Friendship> searchFriendships(Member member, MemberSearchCondition condition) {
         log.info("FriendshipDao.searchFriendships() called");
 
@@ -49,5 +69,17 @@ public class FriendshipDao {
         }
 
         return stream.toList();
+    }
+
+    public boolean areFriends(Member member, Member friend) {
+        boolean memberToFriend = member.getFriendships()
+                .stream()
+                .anyMatch(friendship -> friendship.getFriendMember().equals(friend));
+
+        boolean friendToMember = friend.getFriendships()
+                .stream()
+                .anyMatch(friendship -> friendship.getFriendMember().equals(member));
+
+        return memberToFriend && friendToMember;
     }
 }

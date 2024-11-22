@@ -1,0 +1,42 @@
+package junwatson.mychat.repository.dao;
+
+import junwatson.mychat.domain.Blacklist;
+import junwatson.mychat.domain.Member;
+import junwatson.mychat.exception.MemberNotExistsException;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class BlacklistDao {
+
+    public boolean isBlacklistExists(Member member, Member target) {
+        return member.getBlacklists().stream()
+                .anyMatch(blacklist -> blacklist.getTargetMember().equals(target));
+    }
+
+    public Blacklist createBlacklist(Member member, Member target) {
+        Blacklist blacklist = Blacklist.builder()
+                .member(member)
+                .targetMember(target)
+                .build();
+        member.getBlacklists().add(blacklist);
+        target.getBlockedLists().add(blacklist);
+
+        return blacklist;
+    }
+
+    public Blacklist removeBlacklist(Member member, Member target) {
+        Blacklist findBlacklist = member.getBlockedLists().stream()
+                .filter(blacklist -> blacklist.getTargetMember().equals(target))
+                .findAny()
+                .orElseThrow(() -> new MemberNotExistsException("해당 회원이 차단 목록에 존재하지 않습니다."));
+        member.getBlacklists().remove(findBlacklist);
+
+        return findBlacklist;
+    }
+
+    public List<Blacklist> findBlacklists(Member member) {
+        return member.getBlacklists();
+    }
+}
