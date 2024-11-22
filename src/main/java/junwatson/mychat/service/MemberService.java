@@ -1,12 +1,9 @@
 package junwatson.mychat.service;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.FriendshipRequest;
 import junwatson.mychat.domain.Member;
-import junwatson.mychat.domain.QMember;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.dto.response.TokenDto;
@@ -21,7 +18,6 @@ import junwatson.mychat.repository.condition.MemberSearchCondition;
 import junwatson.mychat.repository.dao.FriendshipRequestDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -29,8 +25,6 @@ import org.springframework.util.StringUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static junwatson.mychat.domain.QMember.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +35,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HashSet<Character> allowedWords = new HashSet<>(Set.of('!', '@', '#', '$', '%', '^', '&', '~', '.'));
     private final TokenProvider tokenProvider;
-    private final FriendshipRequestDao friendshipRequestDao;
 
     public TokenDto signUp(MemberSignUpRequestDto requestDto) {
         log.info("MemberService.signUp() called");
@@ -156,7 +149,7 @@ public class MemberService {
     public List<MemberInfoResponseDto> findSentFriendshipRequest(Member member) {
         log.info("MemberService.findSentFriendshipRequest() called");
 
-        List<FriendshipRequest> sentFriendshipRequest = friendshipRequestDao.findSentFriendshipRequest(member);
+        List<FriendshipRequest> sentFriendshipRequest = memberRepository.findSentFriendshipRequest(member);
 
         return sentFriendshipRequest.stream()
                 .map((friendshipRequest) -> MemberInfoResponseDto.from(friendshipRequest.getResponseMember()))
@@ -166,7 +159,7 @@ public class MemberService {
     public List<MemberInfoResponseDto> findReceivedFriendshipRequest(Member member) {
         log.info("MemberService.findReceivedFriendshipRequest() called");
 
-        List<FriendshipRequest> sentFriendshipRequest = friendshipRequestDao.findReceivedFriendshipRequest(member);
+        List<FriendshipRequest> sentFriendshipRequest = memberRepository.findReceivedFriendshipRequest(member);
 
         return sentFriendshipRequest.stream()
                 .map((friendshipRequest) -> MemberInfoResponseDto.from(friendshipRequest.getRequestMember()))

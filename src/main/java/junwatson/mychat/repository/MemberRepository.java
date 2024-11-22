@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Friendship;
+import junwatson.mychat.domain.FriendshipRequest;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.RefreshToken;
 import junwatson.mychat.exception.IllegalRefreshTokenException;
@@ -100,10 +101,16 @@ public class MemberRepository {
         return friendshipRequestDao.isRequestExists(member, friend);
     }
 
-    public void findSentFriendshipRequest(Member member) {
+    public List<FriendshipRequest> findSentFriendshipRequest(Member member) {
         log.info("MemberRepository.findSentFriendshipRequest() called");
 
+        return friendshipRequestDao.findSentFriendshipRequest(member);
+    }
 
+    public List<FriendshipRequest> findReceivedFriendshipRequest(Member member) {
+        log.info("MemberRepository.findReceivedFriendshipRequest() called");
+
+        return friendshipRequestDao.findReceivedFriendshipRequest(member);
     }
 
     public void createFriendshipRequest(Member member, Member friend) {
