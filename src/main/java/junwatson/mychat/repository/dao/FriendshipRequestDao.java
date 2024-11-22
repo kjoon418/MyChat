@@ -54,10 +54,10 @@ public class FriendshipRequestDao {
     public void removeFriendshipRequest(Member member, Member friend) {
         log.info("FriendshipRequestDao.removeRequest() called");
 
-        Optional<FriendshipRequest> findRequest = member.getSentFriendshipRequests().stream()
+        member.getSentFriendshipRequests().stream()
                 .filter((request) -> request.getResponseMember().equals(friend))
-                .findAny();
-        findRequest.ifPresent(friendshipRequest -> member.getSentFriendshipRequests()
+                .findAny()
+                .ifPresent(friendshipRequest -> member.getSentFriendshipRequests()
                 .remove(friendshipRequest));
     }
 }
