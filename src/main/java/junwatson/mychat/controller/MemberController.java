@@ -2,7 +2,6 @@ package junwatson.mychat.controller;
 
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.*;
-import junwatson.mychat.dto.response.CreateFriendshipResponseDto;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +23,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/friend")
-    public ResponseEntity<CreateFriendshipResponseDto> createFriendship(@RequestBody CreateFriendshipRequestDto requestDto, Principal principal) {
+    public ResponseEntity<MemberInfoResponseDto> createFriendship(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
         log.info("MemberController.createFriendship() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        CreateFriendshipResponseDto responseDto = memberService.createFriendship(requestDto, member);
+        MemberInfoResponseDto responseDto = memberService.createFriendship(requestDto, member);
 
         return ResponseEntity.status(CREATED).body(responseDto);
     }
@@ -57,7 +56,7 @@ public class MemberController {
     }
 
     @GetMapping("/friend/search")
-    public ResponseEntity<List<MemberInfoResponseDto>> searchFriends(@RequestBody SearchFriendRequestDto requestDto, Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> searchFriends(@RequestBody SearchMemberRequestDto requestDto, Principal principal) {
         log.info("MemberController.searchFriends() called");
 
         long memberId = Long.parseLong(principal.getName());
@@ -101,7 +100,7 @@ public class MemberController {
     }
 
     @PostMapping("/blacklist")
-    public ResponseEntity<MemberInfoResponseDto> addBlacklist(@RequestBody BlacklistInfoRequestDto requestDto, Principal principal) {
+    public ResponseEntity<MemberInfoResponseDto> addBlacklist(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
         log.info("MemberController.createBlacklist() called");
 
         long memberId = Long.parseLong(principal.getName());
@@ -112,7 +111,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/blacklist")
-    public ResponseEntity<MemberInfoResponseDto> deleteBlacklist(@RequestBody BlacklistInfoRequestDto requestDto, Principal principal) {
+    public ResponseEntity<MemberInfoResponseDto> deleteBlacklist(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
         log.info("MemberController.deleteBlacklist() called");
 
         long memberId = Long.parseLong(principal.getName());

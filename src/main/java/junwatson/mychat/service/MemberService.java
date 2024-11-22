@@ -8,7 +8,6 @@ import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.dto.response.TokenDto;
-import junwatson.mychat.dto.response.CreateFriendshipResponseDto;
 import junwatson.mychat.dto.response.ReissueAccessTokenResponseDto;
 import junwatson.mychat.exception.BlockException;
 import junwatson.mychat.exception.IllegalMemberStateException;
@@ -89,7 +88,7 @@ public class MemberService {
         return ReissueAccessTokenResponseDto.from(token);
     }
 
-    public CreateFriendshipResponseDto createFriendship(CreateFriendshipRequestDto requestDto, Member member) {
+    public MemberInfoResponseDto createFriendship(MemberInfoRequestDto requestDto, Member member) {
         log.info("MemberService.createFriendship() called");
 
         String friendEmail = requestDto.getEmail();
@@ -115,7 +114,7 @@ public class MemberService {
             memberRepository.createFriendshipRequest(member, friend);
         }
 
-        return CreateFriendshipResponseDto.from(friend);
+        return MemberInfoResponseDto.from(friend);
     }
 
     public MemberInfoResponseDto removeFriendship(Member member, MemberInfoRequestDto requestDto) {
@@ -141,7 +140,7 @@ public class MemberService {
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> searchFriendsByCondition(Member member, SearchFriendRequestDto requestDto) {
+    public List<MemberInfoResponseDto> searchFriendsByCondition(Member member, SearchMemberRequestDto requestDto) {
         log.info("MemberService.searchFriendByCondition() called");
 
         List<Friendship> friendships = memberRepository.searchFriendships(member, requestDto.toCondition());
@@ -189,7 +188,7 @@ public class MemberService {
                 .toList();
     }
 
-    public MemberInfoResponseDto addBlacklist(Member member, BlacklistInfoRequestDto requestDto) {
+    public MemberInfoResponseDto addBlacklist(Member member, MemberInfoRequestDto requestDto) {
         log.info("MemberService.addBlacklist() called");
 
         String targetEmail = requestDto.getEmail();
@@ -209,7 +208,7 @@ public class MemberService {
         return MemberInfoResponseDto.from(blacklist.getTargetMember());
     }
 
-    public MemberInfoResponseDto removeBlacklist(Member member, BlacklistInfoRequestDto requestDto) {
+    public MemberInfoResponseDto removeBlacklist(Member member, MemberInfoRequestDto requestDto) {
         log.info("MemberService.removeBlacklist() called");
 
         String targetEmail = requestDto.getEmail();
