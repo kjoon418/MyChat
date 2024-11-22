@@ -26,7 +26,7 @@ public class Member {
     @Setter
     private RefreshToken refreshToken;
 
-    @OneToMany(fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", fetch = LAZY, cascade = ALL, orphanRemoval = true)
     private final List<Friendship> friendships = new ArrayList<>();
 
     @OneToMany(mappedBy = "requestMember", fetch = LAZY, cascade = ALL, orphanRemoval = true)
