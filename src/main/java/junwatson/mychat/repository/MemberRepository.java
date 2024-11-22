@@ -72,12 +72,16 @@ public class MemberRepository {
     }
 
     public String createRefreshToken(Member member) {
+        log.info("MemberRepository.createRefreshToken() called");
+
         RefreshToken refreshToken = refreshTokenDao.createRefreshToken(member);
 
         return refreshToken.getToken();
     }
 
     public String reissueAccessToken(HttpServletRequest request) {
+        log.info("MemberRepository.reissueAccessToken() called");
+
         String token = tokenProvider.resolveToken(request);
 
         Member member = findById(Long.parseLong(tokenProvider.parseClaims(token).getSubject()))
@@ -91,26 +95,37 @@ public class MemberRepository {
     }
 
     public boolean isExistFriendshipRequest(Member member, Member friend) {
+        log.info("MemberRepository.isExistFriendshipRequest() called");
+
         return friendshipRequestDao.isRequestExists(member, friend);
     }
 
     public void createFriendshipRequest(Member member, Member friend) {
+        log.info("MemberRepository.createFriendshipRequest() called");
+
         friendshipRequestDao.createFriendshipRequest(member, friend);
     }
 
     public void removeFriendshipRequest(Member member, Member friend) {
+        log.info("MemberRepository.removeFriendshipRequest() called");
+
         friendshipRequestDao.removeRequest(member, friend);
     }
 
     public void createFriendship(Member member, Member friend) {
+        log.info("MemberRepository.createFriendship() called");
+
         friendshipDao.createFriendship(member, friend);
     }
 
     public List<Friendship> searchFriendship(Member member, MemberSearchCondition condition) {
+        log.info("MemberRepository.searchFriendship() called");
+
         return friendshipDao.searchFriendships(member, condition);
     }
 
     public List<Member> searchMember(Member requestMember, MemberSearchCondition condition) {
+        log.info("MemberRepository.searchMember() called");
 
         String email = condition.getEmail();
         String name = condition.getName();
@@ -123,6 +138,8 @@ public class MemberRepository {
     }
 
     private BooleanExpression likeName(String name) {
+        log.info("MemberRepository.likeName() called");
+
         if (!StringUtils.hasText(name)) {
             return null;
         }
@@ -131,6 +148,8 @@ public class MemberRepository {
     }
 
     private BooleanExpression likeEmail(String email) {
+        log.info("MemberRepository.likeEmail() called");
+
         if (!StringUtils.hasText(email)) {
             return null;
         }
@@ -139,6 +158,8 @@ public class MemberRepository {
     }
 
     private BooleanExpression differentId(Long id) {
+        log.info("MemberRepository.differentId() called");
+
         if (id == null) {
             return null;
         }
