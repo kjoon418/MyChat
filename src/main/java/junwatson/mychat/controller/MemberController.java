@@ -3,6 +3,7 @@ package junwatson.mychat.controller;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.CreateFriendshipRequestDto;
 import junwatson.mychat.dto.request.SearchFriendRequestDto;
+import junwatson.mychat.dto.request.SearchMemberRequestDto;
 import junwatson.mychat.dto.response.CreateFriendshipResponseDto;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.service.MemberService;
@@ -57,4 +58,14 @@ public class MemberController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<MemberInfoResponseDto>> searchMember(@RequestBody SearchMemberRequestDto requestDto, Principal principal) {
+        log.info("MemberController.searchMember() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        List<MemberInfoResponseDto> responseDto = memberService.searchMemberByCondition(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
 }

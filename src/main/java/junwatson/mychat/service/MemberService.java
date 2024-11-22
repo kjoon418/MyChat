@@ -1,23 +1,25 @@
 package junwatson.mychat.service;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.Member;
-import junwatson.mychat.dto.request.MemberSignInRequestDto;
-import junwatson.mychat.dto.request.SearchFriendRequestDto;
+import junwatson.mychat.domain.QMember;
+import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.dto.response.TokenDto;
-import junwatson.mychat.dto.request.CreateFriendshipRequestDto;
-import junwatson.mychat.dto.request.MemberSignUpRequestDto;
 import junwatson.mychat.dto.response.CreateFriendshipResponseDto;
 import junwatson.mychat.dto.response.ReissueAccessTokenResponseDto;
 import junwatson.mychat.exception.IllegalMemberStateException;
+import junwatson.mychat.exception.IllegalSearchConditionException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.repository.MemberRepository;
 import junwatson.mychat.repository.condition.MemberSearchCondition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -25,6 +27,8 @@ import org.springframework.util.StringUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static junwatson.mychat.domain.QMember.*;
 
 @Service
 @RequiredArgsConstructor
@@ -121,6 +125,22 @@ public class MemberService {
 
         return friendships.stream()
                 .map(Friendship::getFriendMember)
+                .map(MemberInfoResponseDto::from)
+                .toList();
+    }
+
+    public List<MemberInfoResponseDto> searchMemberByCondition(Member requestMember, SearchMemberRequestDto requestDto) {
+
+        MemberSearchCondition condition = requestDto.toCondition();
+
+        // 전체 회원 조회는 조건 없이 검색하지 못하도록 함
+        if (!StringUtils.hasText(condition.getEmail()) && !StringUtils.hasText(condition.getName())) {
+            throw new IllegalSearchConditionException("회원은 조건 없이 검색할 수 없습니다.");
+        }
+
+        List<Member> members = memberRepository.searchMember(requestMember, condition);
+
+        return members.stream()
                 .map(MemberInfoResponseDto::from)
                 .toList();
     }

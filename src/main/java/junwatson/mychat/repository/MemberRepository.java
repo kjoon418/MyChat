@@ -1,5 +1,7 @@
 package junwatson.mychat.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Friendship;
@@ -12,17 +14,18 @@ import junwatson.mychat.repository.condition.MemberSearchCondition;
 import junwatson.mychat.repository.dao.FriendshipDao;
 import junwatson.mychat.repository.dao.FriendshipRequestDao;
 import junwatson.mychat.repository.dao.RefreshTokenDao;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 
+import static junwatson.mychat.domain.QMember.member;
+
 @Repository
 @Transactional
-@RequiredArgsConstructor
 @Slf4j
 public class MemberRepository {
 
@@ -31,6 +34,16 @@ public class MemberRepository {
     private final RefreshTokenDao refreshTokenDao;
     private final FriendshipRequestDao friendshipRequestDao;
     private final FriendshipDao friendshipDao;
+    private final JPAQueryFactory query;
+
+    public MemberRepository(EntityManager em, TokenProvider tokenProvider, RefreshTokenDao refreshTokenDao, FriendshipRequestDao friendshipRequestDao, FriendshipDao friendshipDao) {
+        this.em = em;
+        this.tokenProvider = tokenProvider;
+        this.refreshTokenDao = refreshTokenDao;
+        this.friendshipRequestDao = friendshipRequestDao;
+        this.friendshipDao = friendshipDao;
+        this.query = new JPAQueryFactory(em);
+    }
 
     public Optional<Member> findByEmail(String email) {
         log.info("MemberRepository.findByEmail() called");
@@ -95,5 +108,41 @@ public class MemberRepository {
 
     public List<Friendship> searchFriendship(Member member, MemberSearchCondition condition) {
         return friendshipDao.searchFriendships(member, condition);
+    }
+
+    public List<Member> searchMember(Member requestMember, MemberSearchCondition condition) {
+
+        String email = condition.getEmail();
+        String name = condition.getName();
+        Long id = requestMember.getId();
+
+        return query.select(member)
+                .from(member)
+                .where(likeEmail(email), likeName(name), differentId(id))
+                .fetch();
+    }
+
+    private BooleanExpression likeName(String name) {
+        if (!StringUtils.hasText(name)) {
+            return null;
+        }
+
+        return member.name.like("%" + name + "%");
+    }
+
+    private BooleanExpression likeEmail(String email) {
+        if (!StringUtils.hasText(email)) {
+            return null;
+        }
+
+        return member.email.like("%" + email + "%");
+    }
+
+    private BooleanExpression differentId(Long id) {
+        if (id == null) {
+            return null;
+        }
+
+        return member.id.eq(id).not();
     }
 }
