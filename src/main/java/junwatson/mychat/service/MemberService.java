@@ -112,6 +112,8 @@ public class MemberService {
     }
 
     public List<MemberInfoResponseDto> findAllFriend(Member member) {
+        log.info("MemberService.findAllFriend() called");
+
         List<Friendship> friendships = memberRepository.searchFriendship(member, MemberSearchCondition.noCondition());
 
         return friendships.stream()
@@ -121,6 +123,8 @@ public class MemberService {
     }
 
     public List<MemberInfoResponseDto> searchFriendByCondition(Member member, SearchFriendRequestDto requestDto) {
+        log.info("MemberService.searchFriendByCondition() called");
+
         List<Friendship> friendships = memberRepository.searchFriendship(member, requestDto.toCondition());
 
         return friendships.stream()
@@ -130,6 +134,7 @@ public class MemberService {
     }
 
     public List<MemberInfoResponseDto> searchMemberByCondition(Member requestMember, SearchMemberRequestDto requestDto) {
+        log.info("MemberService.searchMemberByCondition() called");
 
         MemberSearchCondition condition = requestDto.toCondition();
 
@@ -163,11 +168,8 @@ public class MemberService {
         if (isIllegalString(email) || isIllegalString(password)) {
             return false;
         }
-        if (name.contains(" ")) {
-            return false;
-        }
 
-        return true;
+        return !name.contains(" ");
     }
 
     private boolean isIllegalString(String string) {
