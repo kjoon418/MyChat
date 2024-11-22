@@ -29,7 +29,7 @@ public class FriendshipRequestDao {
 
         return member.getReceivedFriendshipRequests()
                 .stream()
-                .anyMatch((request) -> request.getResponseMember().equals(friend));
+                .anyMatch((request) -> request.getRequestMember().equals(friend));
     }
 
     public boolean isSentFriendshipRequestExists(Member member, Member friend) {
