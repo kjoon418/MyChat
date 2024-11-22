@@ -38,6 +38,12 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = LAZY)
     private final List<MemberChatRoom> memberChatRooms = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    private final List<Blacklist> blacklists = new ArrayList<>();
+
+    @OneToMany(mappedBy = "targetMember", fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    private final List<Blacklist> blockedLists = new ArrayList<>();
+
     @Enumerated(STRING)
     private MemberRole role;
 
