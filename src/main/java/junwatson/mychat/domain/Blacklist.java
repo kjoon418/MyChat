@@ -12,6 +12,7 @@ import static lombok.AccessLevel.*;
 @Entity
 @NoArgsConstructor(access = PROTECTED)
 @Getter
+@Table(uniqueConstraints = {@UniqueConstraint(name = "couple_of_member_unique", columnNames = {"member_id", "target_id"})})
 public class Blacklist {
 
     @Id

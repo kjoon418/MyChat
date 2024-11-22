@@ -15,6 +15,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @NoArgsConstructor(access = PROTECTED)
+@Table(uniqueConstraints = {@UniqueConstraint(name = "member_chat_room_unique", columnNames = {"member_id", "chat_room_id"})})
 public class MemberChatRoom {
 
     @Id

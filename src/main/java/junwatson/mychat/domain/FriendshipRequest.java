@@ -12,6 +12,7 @@ import static lombok.AccessLevel.*;
 @Entity
 @NoArgsConstructor(access = PROTECTED)
 @Getter
+@Table(uniqueConstraints = {@UniqueConstraint(name = "couple_of_member_unique", columnNames = {"request_member_id", "response_member_id"})})
 public class FriendshipRequest {
 
     @Id
