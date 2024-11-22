@@ -10,10 +10,19 @@ JWT, OAuth, Spring을 통한 채팅 서버 구현 연습 목적의 토이 프로
 [ERDCloud](https://www.erdcloud.com/d/wjeAJAgfieEpQtStm) 참고
 
 ## 진행 상황
-- [x] Google OAuth를 이용한 회원가입/로그인
-- [x] 자체 회원가입/로그인
-- [x] 엑세스 토큰 재발급
-- [ ] 회원 정보 수정
+<details>
+  <summary>회원 정보 관련 기능</summary>
+  <div markdown="1">
+  
+  - [x] Google OAuth를 이용한 회원가입/로그인
+  - [x] 자체 회원가입/로그인
+  - [x] 엑세스 토큰 재발급
+  - [ ] 회원 정보 수정
+</details>
+<details>
+  <summary>친구 관련 기능</summary>
+  <div markdown="1">
+  
 - [x] 친구 추가
 - [x] 친구 조회(조건X)
 - [x] 친구 검색(조건O)
@@ -22,6 +31,11 @@ JWT, OAuth, Spring을 통한 채팅 서버 구현 연습 목적의 토이 프로
 - [x] 받은 친구 신청 조회
 - [ ] 친구 신청 거절
 - [ ] 유저 차단
+</details>
+<details>
+  <summary>채팅 관련 기능</summary>
+  <div markdown="1">
+  
 - [ ] 1:1 채팅방 생성
 - [ ] 단체 채팅방 생성
 - [ ] 채팅방 수정
@@ -31,3 +45,4 @@ JWT, OAuth, Spring을 통한 채팅 서버 구현 연습 목적의 토이 프로
 - [ ] 채팅 조회(조건X)
 - [ ] 채팅 검색(조건O)
 - [ ] 채팅 삭제(5분 안에 삭제시 완전 삭제, 이후엔 '삭제된 메시지입니다' 표시)
+</details>
