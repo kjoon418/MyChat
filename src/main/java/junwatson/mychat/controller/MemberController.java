@@ -37,56 +37,56 @@ public class MemberController {
     }
 
     @GetMapping("/friend")
-    public ResponseEntity<List<MemberInfoResponseDto>> findAllFriend(Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> findAllFriends(Principal principal) {
         log.info("MemberController.findAllFriends() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        List<MemberInfoResponseDto> responseDto = memberService.findAllFriend(member);
+        List<MemberInfoResponseDto> responseDto = memberService.findAllFriends(member);
 
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/friend/search")
-    public ResponseEntity<List<MemberInfoResponseDto>> searchFriend(@RequestBody SearchFriendRequestDto requestDto, Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> searchFriends(@RequestBody SearchFriendRequestDto requestDto, Principal principal) {
         log.info("MemberController.searchFriends() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        List<MemberInfoResponseDto> responseDto = memberService.searchFriendByCondition(member, requestDto);
+        List<MemberInfoResponseDto> responseDto = memberService.searchFriendsByCondition(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/friend/sent")
-    public ResponseEntity<List<MemberInfoResponseDto>> findSentFriendRequest(Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> findSentFriendRequests(Principal principal) {
         log.info("MemberController.findSentFriendRequest() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        List<MemberInfoResponseDto> responseDto = memberService.findSentFriendshipRequest(member);
+        List<MemberInfoResponseDto> responseDto = memberService.findSentFriendshipRequests(member);
 
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/friend/received")
-    public ResponseEntity<List<MemberInfoResponseDto>> findReceivedFriendRequest(Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> findReceivedFriendRequests(Principal principal) {
         log.info("MemberController.findReceivedFriendRequest() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        List<MemberInfoResponseDto> responseDto = memberService.findReceivedFriendshipRequest(member);
+        List<MemberInfoResponseDto> responseDto = memberService.findReceivedFriendshipRequests(member);
 
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MemberInfoResponseDto>> searchMember(@RequestBody SearchMemberRequestDto requestDto, Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> searchMembers(@RequestBody SearchMemberRequestDto requestDto, Principal principal) {
         log.info("MemberController.searchMember() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        List<MemberInfoResponseDto> responseDto = memberService.searchMemberByCondition(member, requestDto);
+        List<MemberInfoResponseDto> responseDto = memberService.searchMembersByCondition(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }

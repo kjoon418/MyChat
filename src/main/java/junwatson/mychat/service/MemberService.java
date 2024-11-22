@@ -15,7 +15,6 @@ import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.repository.MemberRepository;
 import junwatson.mychat.repository.condition.MemberSearchCondition;
-import junwatson.mychat.repository.dao.FriendshipRequestDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -107,10 +106,10 @@ public class MemberService {
         return CreateFriendshipResponseDto.from(friend);
     }
 
-    public List<MemberInfoResponseDto> findAllFriend(Member member) {
+    public List<MemberInfoResponseDto> findAllFriends(Member member) {
         log.info("MemberService.findAllFriend() called");
 
-        List<Friendship> friendships = memberRepository.searchFriendship(member, MemberSearchCondition.noCondition());
+        List<Friendship> friendships = memberRepository.searchFriendships(member, MemberSearchCondition.noCondition());
 
         return friendships.stream()
                 .map(Friendship::getFriendMember)
@@ -118,10 +117,10 @@ public class MemberService {
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> searchFriendByCondition(Member member, SearchFriendRequestDto requestDto) {
+    public List<MemberInfoResponseDto> searchFriendsByCondition(Member member, SearchFriendRequestDto requestDto) {
         log.info("MemberService.searchFriendByCondition() called");
 
-        List<Friendship> friendships = memberRepository.searchFriendship(member, requestDto.toCondition());
+        List<Friendship> friendships = memberRepository.searchFriendships(member, requestDto.toCondition());
 
         return friendships.stream()
                 .map(Friendship::getFriendMember)
@@ -129,7 +128,7 @@ public class MemberService {
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> searchMemberByCondition(Member requestMember, SearchMemberRequestDto requestDto) {
+    public List<MemberInfoResponseDto> searchMembersByCondition(Member requestMember, SearchMemberRequestDto requestDto) {
         log.info("MemberService.searchMemberByCondition() called");
 
         MemberSearchCondition condition = requestDto.toCondition();
@@ -139,27 +138,27 @@ public class MemberService {
             throw new IllegalSearchConditionException("회원은 조건 없이 검색할 수 없습니다.");
         }
 
-        List<Member> members = memberRepository.searchMember(requestMember, condition);
+        List<Member> members = memberRepository.searchMembers(requestMember, condition);
 
         return members.stream()
                 .map(MemberInfoResponseDto::from)
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> findSentFriendshipRequest(Member member) {
+    public List<MemberInfoResponseDto> findSentFriendshipRequests(Member member) {
         log.info("MemberService.findSentFriendshipRequest() called");
 
-        List<FriendshipRequest> sentFriendshipRequest = memberRepository.findSentFriendshipRequest(member);
+        List<FriendshipRequest> sentFriendshipRequest = memberRepository.findSentFriendshipRequests(member);
 
         return sentFriendshipRequest.stream()
                 .map((friendshipRequest) -> MemberInfoResponseDto.from(friendshipRequest.getResponseMember()))
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> findReceivedFriendshipRequest(Member member) {
+    public List<MemberInfoResponseDto> findReceivedFriendshipRequests(Member member) {
         log.info("MemberService.findReceivedFriendshipRequest() called");
 
-        List<FriendshipRequest> sentFriendshipRequest = memberRepository.findReceivedFriendshipRequest(member);
+        List<FriendshipRequest> sentFriendshipRequest = memberRepository.findReceivedFriendshipRequests(member);
 
         return sentFriendshipRequest.stream()
                 .map((friendshipRequest) -> MemberInfoResponseDto.from(friendshipRequest.getRequestMember()))

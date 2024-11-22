@@ -12,19 +12,19 @@ import java.util.Optional;
 @Slf4j
 public class FriendshipRequestDao {
 
-    public List<FriendshipRequest> findSentFriendshipRequest(Member member) {
+    public List<FriendshipRequest> findSentFriendshipRequests(Member member) {
         log.info("FriendshipRequestDao.findSentFriendshipRequest() called");
 
         return member.getSentFriendshipRequests();
     }
 
-    public List<FriendshipRequest> findReceivedFriendshipRequest(Member member) {
+    public List<FriendshipRequest> findReceivedFriendshipRequests(Member member) {
         log.info("FriendshipRequestDao.findReceivedFriendshipRequest() called");
 
         return member.getReceivedFriendshipRequests();
     }
 
-    public boolean isRequestExists(Member member, Member friend) {
+    public boolean isFriendshipRequestExists(Member member, Member friend) {
         log.info("FriendshipRequestDao.isRequestExists() called");
 
         Optional<FriendshipRequest> findRequest = member.getReceivedFriendshipRequests()
@@ -46,7 +46,7 @@ public class FriendshipRequestDao {
         member.getSentFriendshipRequests().add(friendshipRequest);
     }
 
-    public void removeRequest(Member member, Member friend) {
+    public void removeFriendshipRequest(Member member, Member friend) {
         log.info("FriendshipRequestDao.removeRequest() called");
 
         Optional<FriendshipRequest> findRequest = member.getSentFriendshipRequests().stream()

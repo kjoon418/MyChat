@@ -98,19 +98,19 @@ public class MemberRepository {
     public boolean isExistFriendshipRequest(Member member, Member friend) {
         log.info("MemberRepository.isExistFriendshipRequest() called");
 
-        return friendshipRequestDao.isRequestExists(member, friend);
+        return friendshipRequestDao.isFriendshipRequestExists(member, friend);
     }
 
-    public List<FriendshipRequest> findSentFriendshipRequest(Member member) {
+    public List<FriendshipRequest> findSentFriendshipRequests(Member member) {
         log.info("MemberRepository.findSentFriendshipRequest() called");
 
-        return friendshipRequestDao.findSentFriendshipRequest(member);
+        return friendshipRequestDao.findSentFriendshipRequests(member);
     }
 
-    public List<FriendshipRequest> findReceivedFriendshipRequest(Member member) {
+    public List<FriendshipRequest> findReceivedFriendshipRequests(Member member) {
         log.info("MemberRepository.findReceivedFriendshipRequest() called");
 
-        return friendshipRequestDao.findReceivedFriendshipRequest(member);
+        return friendshipRequestDao.findReceivedFriendshipRequests(member);
     }
 
     public void createFriendshipRequest(Member member, Member friend) {
@@ -122,7 +122,7 @@ public class MemberRepository {
     public void removeFriendshipRequest(Member member, Member friend) {
         log.info("MemberRepository.removeFriendshipRequest() called");
 
-        friendshipRequestDao.removeRequest(member, friend);
+        friendshipRequestDao.removeFriendshipRequest(member, friend);
     }
 
     public void createFriendship(Member member, Member friend) {
@@ -131,13 +131,13 @@ public class MemberRepository {
         friendshipDao.createFriendship(member, friend);
     }
 
-    public List<Friendship> searchFriendship(Member member, MemberSearchCondition condition) {
+    public List<Friendship> searchFriendships(Member member, MemberSearchCondition condition) {
         log.info("MemberRepository.searchFriendship() called");
 
         return friendshipDao.searchFriendships(member, condition);
     }
 
-    public List<Member> searchMember(Member requestMember, MemberSearchCondition condition) {
+    public List<Member> searchMembers(Member requestMember, MemberSearchCondition condition) {
         log.info("MemberRepository.searchMember() called");
 
         String email = condition.getEmail();
