@@ -27,12 +27,9 @@ public class FriendshipRequestDao {
     public boolean isFriendshipRequestExists(Member member, Member friend) {
         log.info("FriendshipRequestDao.isRequestExists() called");
 
-        Optional<FriendshipRequest> findRequest = member.getReceivedFriendshipRequests()
+        return member.getReceivedFriendshipRequests()
                 .stream()
-                .filter((request) -> request.getRequestMember().equals(friend))
-                .findAny();
-
-        return findRequest.isPresent();
+                .anyMatch((request) -> request.getRequestMember().equals(friend));
     }
 
     public void createFriendshipRequest(Member member, Member friend) {
