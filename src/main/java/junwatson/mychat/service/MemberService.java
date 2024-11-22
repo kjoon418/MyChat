@@ -129,6 +129,22 @@ public class MemberService {
         return MemberInfoResponseDto.from(friend);
     }
 
+    public void rejectFriendshipRequest(Member member, MemberInfoRequestDto requestDto) {
+        log.info("MemberService.rejectFriendshipRequest()");
+
+        Member friend = memberRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new MemberNotExistsException("해당 회원이 존재하지 않습니다."));
+
+        System.out.println("member.getEmail() = " + member.getEmail());
+        System.out.println("friend.getEmail() = " + friend.getEmail());
+
+        if (!memberRepository.isReceivedFriendshipRequestExists(member, friend)) {
+            throw new IllegalMemberStateException("해당 회원으로부터의 친구 요청이 존재하지 않습니다.");
+        }
+
+        memberRepository.removeFriendshipRequest(friend, member);
+    }
+
     public List<MemberInfoResponseDto> findAllFriends(Member member) {
         log.info("MemberService.findAllFriend() called");
 

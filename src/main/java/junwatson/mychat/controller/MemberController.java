@@ -88,6 +88,16 @@ public class MemberController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/friend/rejection")
+    public void rejectFriendshipRequest(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
+        log.info("MemberController.rejectFriendshipRequest() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+
+        memberService.rejectFriendshipRequest(member, requestDto);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<MemberInfoResponseDto>> searchMembers(@RequestBody SearchMemberRequestDto requestDto, Principal principal) {
         log.info("MemberController.searchMember() called");
