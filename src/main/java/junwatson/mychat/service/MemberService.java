@@ -10,6 +10,7 @@ import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.dto.response.CreateFriendshipResponseDto;
 import junwatson.mychat.dto.response.ReissueAccessTokenResponseDto;
+import junwatson.mychat.exception.BlockException;
 import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.exception.IllegalSearchConditionException;
 import junwatson.mychat.exception.MemberNotExistsException;
@@ -95,6 +96,16 @@ public class MemberService {
 
         Member friend = memberRepository.findByEmail(friendEmail)
                 .orElseThrow(() -> new MemberNotExistsException("해당 이메일을 지닌 회원이 존재하지 않습니다."));
+
+        // 상대로부터 차단당했다면 친구 요청을 보낼 수 없게 한다
+        if (memberRepository.isBlocked(member, friend)) {
+            throw new BlockException("나를 차단한 회원에게는 친구 요청을 보낼 수 없습니다.");
+        }
+
+        // 차단한 상대를 친구 추가하려 할 경우, 차단을 해제한다
+        if (memberRepository.isBlacklistExists(member, friend)) {
+            memberRepository.removeBlacklist(member, friend);
+        }
 
         // 이미 상대 측에게로부터 친구 요청이 와 있었다면, 둘을 친구로 등록한다
         if (memberRepository.isReceivedFriendshipRequestExists(member, friend)) {

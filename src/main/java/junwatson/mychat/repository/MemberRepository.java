@@ -107,6 +107,18 @@ public class MemberRepository {
         return friendshipRequestDao.isSentFriendshipRequestExists(member, friend);
     }
 
+    public boolean isBlocked(Member member, Member target) {
+        log.info("MemberRepository.isBlocked() called");
+
+        return blacklistDao.isBlocked(member, target);
+    }
+
+    public boolean isBlacklistExists(Member member, Member target) {
+        log.info("MemberRepository.isBlacklistExists() called");
+
+        return blacklistDao.isBlacklistExists(member, target);
+    }
+
     public List<FriendshipRequest> findSentFriendshipRequests(Member member) {
         log.info("MemberRepository.findSentFriendshipRequest() called");
 

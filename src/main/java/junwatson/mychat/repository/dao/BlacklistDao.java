@@ -10,6 +10,11 @@ import java.util.List;
 @Repository
 public class BlacklistDao {
 
+    public boolean isBlocked(Member member, Member target) {
+        return target.getBlacklists().stream()
+                .anyMatch(blacklist -> blacklist.getTargetMember().equals(member));
+    }
+
     public boolean isBlacklistExists(Member member, Member target) {
         return member.getBlacklists().stream()
                 .anyMatch(blacklist -> blacklist.getTargetMember().equals(target));
@@ -27,7 +32,7 @@ public class BlacklistDao {
     }
 
     public Blacklist removeBlacklist(Member member, Member target) {
-        Blacklist findBlacklist = member.getBlockedLists().stream()
+        Blacklist findBlacklist = member.getBlacklists().stream()
                 .filter(blacklist -> blacklist.getTargetMember().equals(target))
                 .findAny()
                 .orElseThrow(() -> new MemberNotExistsException("해당 회원이 차단 목록에 존재하지 않습니다."));
