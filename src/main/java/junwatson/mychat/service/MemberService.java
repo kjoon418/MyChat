@@ -118,6 +118,18 @@ public class MemberService {
         return CreateFriendshipResponseDto.from(friend);
     }
 
+    public MemberInfoResponseDto removeFriendship(Member member, MemberInfoRequestDto requestDto) {
+        log.info("MemberService.removeFriendship() called");
+
+        String email = requestDto.getEmail();
+        Member friend = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotExistsException("대상 회원과 친구가 아닙니다."));
+
+        memberRepository.removeFriendship(member, friend);
+
+        return MemberInfoResponseDto.from(friend);
+    }
+
     public List<MemberInfoResponseDto> findAllFriends(Member member) {
         log.info("MemberService.findAllFriend() called");
 
@@ -140,7 +152,7 @@ public class MemberService {
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> searchMembersByCondition(Member requestMember, SearchMemberRequestDto requestDto) {
+    public List<MemberInfoResponseDto> searchMembersByCondition(Member member, SearchMemberRequestDto requestDto) {
         log.info("MemberService.searchMemberByCondition() called");
 
         MemberSearchCondition condition = requestDto.toCondition();
@@ -150,7 +162,7 @@ public class MemberService {
             throw new IllegalSearchConditionException("회원은 조건 없이 검색할 수 없습니다.");
         }
 
-        List<Member> members = memberRepository.searchMembers(requestMember, condition);
+        List<Member> members = memberRepository.searchMembers(member, condition);
 
         return members.stream()
                 .map(MemberInfoResponseDto::from)

@@ -1,10 +1,7 @@
 package junwatson.mychat.controller;
 
 import junwatson.mychat.domain.Member;
-import junwatson.mychat.dto.request.BlacklistInfoRequestDto;
-import junwatson.mychat.dto.request.CreateFriendshipRequestDto;
-import junwatson.mychat.dto.request.SearchFriendRequestDto;
-import junwatson.mychat.dto.request.SearchMemberRequestDto;
+import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.CreateFriendshipResponseDto;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.service.MemberService;
@@ -44,6 +41,17 @@ public class MemberController {
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
         List<MemberInfoResponseDto> responseDto = memberService.findAllFriends(member);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @DeleteMapping("/friend")
+    public ResponseEntity<MemberInfoResponseDto> removeFriend(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
+        log.info("MemberController.removeFriend() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        MemberInfoResponseDto responseDto = memberService.removeFriendship(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }
