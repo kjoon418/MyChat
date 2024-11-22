@@ -100,6 +100,12 @@ public class MemberRepository {
         return friendshipRequestDao.isRequestExists(member, friend);
     }
 
+    public void findSentFriendshipRequest(Member member) {
+        log.info("MemberRepository.findSentFriendshipRequest() called");
+
+
+    }
+
     public void createFriendshipRequest(Member member, Member friend) {
         log.info("MemberRepository.createFriendshipRequest() called");
 

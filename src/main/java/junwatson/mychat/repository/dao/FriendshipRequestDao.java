@@ -5,11 +5,24 @@ import junwatson.mychat.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 @Slf4j
 public class FriendshipRequestDao {
+
+    public List<FriendshipRequest> findSentFriendshipRequest(Member member) {
+        log.info("FriendshipRequestDao.findSentFriendshipRequest() called");
+
+        return member.getSentFriendshipRequests();
+    }
+
+    public List<FriendshipRequest> findReceivedFriendshipRequest(Member member) {
+        log.info("FriendshipRequestDao.findReceivedFriendshipRequest() called");
+
+        return member.getReceivedFriendshipRequests();
+    }
 
     public boolean isRequestExists(Member member, Member friend) {
         log.info("FriendshipRequestDao.isRequestExists() called");
@@ -33,9 +46,6 @@ public class FriendshipRequestDao {
         member.getSentFriendshipRequests().add(friendshipRequest);
     }
 
-    /**
-     * 친구 추가 요청을 삭제하는 메서드
-     */
     public void removeRequest(Member member, Member friend) {
         log.info("FriendshipRequestDao.removeRequest() called");
 

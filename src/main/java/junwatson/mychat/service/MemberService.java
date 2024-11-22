@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Friendship;
+import junwatson.mychat.domain.FriendshipRequest;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.QMember;
 import junwatson.mychat.dto.request.*;
@@ -17,6 +18,7 @@ import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.repository.MemberRepository;
 import junwatson.mychat.repository.condition.MemberSearchCondition;
+import junwatson.mychat.repository.dao.FriendshipRequestDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final HashSet<Character> allowedWords = new HashSet<>(Set.of('!', '@', '#', '$', '%', '^', '&', '~', '.'));
     private final TokenProvider tokenProvider;
+    private final FriendshipRequestDao friendshipRequestDao;
 
     public TokenDto signUp(MemberSignUpRequestDto requestDto) {
         log.info("MemberService.signUp() called");
@@ -147,6 +150,26 @@ public class MemberService {
 
         return members.stream()
                 .map(MemberInfoResponseDto::from)
+                .toList();
+    }
+
+    public List<MemberInfoResponseDto> findSentFriendshipRequest(Member member) {
+        log.info("MemberService.findSentFriendshipRequest() called");
+
+        List<FriendshipRequest> sentFriendshipRequest = friendshipRequestDao.findSentFriendshipRequest(member);
+
+        return sentFriendshipRequest.stream()
+                .map((friendshipRequest) -> MemberInfoResponseDto.from(friendshipRequest.getResponseMember()))
+                .toList();
+    }
+
+    public List<MemberInfoResponseDto> findReceivedFriendshipRequest(Member member) {
+        log.info("MemberService.findReceivedFriendshipRequest() called");
+
+        List<FriendshipRequest> sentFriendshipRequest = friendshipRequestDao.findReceivedFriendshipRequest(member);
+
+        return sentFriendshipRequest.stream()
+                .map((friendshipRequest) -> MemberInfoResponseDto.from(friendshipRequest.getRequestMember()))
                 .toList();
     }
 

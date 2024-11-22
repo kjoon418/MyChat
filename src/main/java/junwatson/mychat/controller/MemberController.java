@@ -58,6 +58,28 @@ public class MemberController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/friend/sent")
+    public ResponseEntity<List<MemberInfoResponseDto>> findSentFriendRequest(Principal principal) {
+        log.info("MemberController.findSentFriendRequest() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        List<MemberInfoResponseDto> responseDto = memberService.findSentFriendshipRequest(member);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/friend/received")
+    public ResponseEntity<List<MemberInfoResponseDto>> findReceivedFriendRequest(Principal principal) {
+        log.info("MemberController.findReceivedFriendRequest() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        List<MemberInfoResponseDto> responseDto = memberService.findReceivedFriendshipRequest(member);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<MemberInfoResponseDto>> searchMember(@RequestBody SearchMemberRequestDto requestDto, Principal principal) {
         log.info("MemberController.searchMember() called");
