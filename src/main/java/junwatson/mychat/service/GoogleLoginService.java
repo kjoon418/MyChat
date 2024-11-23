@@ -91,7 +91,7 @@ public class GoogleLoginService {
         );
 
         if (member.getAuthorizedBy() != MemberAuthorizationType.GOOGLE) {
-            throw new IllegalMemberStateException("이미 다른 경로로 회원 가입한 이메일입니다.");
+            throw new IllegalMemberStateException("이미 다른 경로로 회원 가입된 이메일입니다.");
         }
 
         return TokenDto.builder()
