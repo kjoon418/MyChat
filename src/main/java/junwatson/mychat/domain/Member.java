@@ -48,11 +48,14 @@ public class Member {
     private MemberRole role;
 
     @Column(unique = true, nullable = false)
+    @Setter
     private String email;
-
     @Column(nullable = false)
+    @Setter
     private String name;
+    @Setter
     private String password;
+    @Setter
     private String profileUrl;
 
     @Builder
