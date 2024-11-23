@@ -72,6 +72,38 @@ public class MemberRepository {
         return member;
     }
 
+    public Member updateEmail(Member member, String email) {
+        log.info("MemberRepository.updateEmail() called");
+
+        member.setEmail(email);
+
+        return member;
+    }
+
+    public Member updatePassword(Member member, String password) {
+        log.info("MemberRepository.updatePassword() called");
+
+        member.setPassword(password);
+
+        return member;
+    }
+
+    public Member updateName(Member member, String name) {
+        log.info("MemberRepository.updateName() called");
+
+        member.setName(name);
+
+        return member;
+    }
+
+    public Member updateProfileUrl(Member member, String profileUrl) {
+        log.info("MemberRepository.updateProfileUrl() called");
+
+        member.setProfileUrl(profileUrl);
+
+        return member;
+    }
+
     public String createRefreshToken(Member member) {
         log.info("MemberRepository.createRefreshToken() called");
 

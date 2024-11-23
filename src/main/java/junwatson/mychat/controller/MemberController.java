@@ -22,6 +22,18 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @PatchMapping
+    public ResponseEntity<MemberInfoResponseDto> updateMember(@RequestBody MemberModificationRequestDto requestDto, Principal principal) {
+        log.info("MemberController.updateMember() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        MemberInfoResponseDto responseDto = memberService.updateMember(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+
     @PostMapping("/friend")
     public ResponseEntity<MemberInfoResponseDto> createFriendship(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
         log.info("MemberController.createFriendship() called");

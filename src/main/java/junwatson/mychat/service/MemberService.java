@@ -5,6 +5,7 @@ import junwatson.mychat.domain.Blacklist;
 import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.FriendshipRequest;
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.domain.type.MemberAuthorizationType;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.dto.response.TokenDto;
@@ -78,6 +79,44 @@ public class MemberService {
 
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberNotExistsException("해당 ID를 지닌 회원이 존재하지 않습니다."));
+    }
+
+    public MemberInfoResponseDto updateMember(Member member, MemberModificationRequestDto requestDto) {
+        log.info("MemberService.updateMember()");
+
+        // Google 인증을 통한 회원은 수정할 수 없게 함
+        if (hasProperAuthorizationType(member, MemberAuthorizationType.GOOGLE)) {
+            throw new IllegalMemberStateException("구글 회원의 정보는 수정할 수 없습니다.");
+        }
+
+        String email = requestDto.getEmail();
+        String password = requestDto.getPassword();
+        String name = requestDto.getName();
+        String profileUrl = requestDto.getProfileUrl();
+        boolean updated = false;
+
+        if (StringUtils.hasText(email)) {
+            memberRepository.updateEmail(member, email);
+            updated = true;
+        }
+        if (StringUtils.hasText(password)) {
+            memberRepository.updatePassword(member, password);
+            updated = true;
+        }
+        if (StringUtils.hasText(name)) {
+            memberRepository.updatePassword(member, name);
+            updated = true;
+        }
+        if (StringUtils.hasText(profileUrl)) {
+            memberRepository.updateProfileUrl(member, profileUrl);
+            updated = true;
+        }
+
+        if (!updated) {
+            throw new IllegalArgumentException("아무 정보도 전달되지 않았습니다.");
+        }
+
+        return MemberInfoResponseDto.from(member);
     }
 
     public ReissueAccessTokenResponseDto reissueAccessToken(HttpServletRequest request) {
@@ -271,5 +310,11 @@ public class MemberService {
         }
 
         return false;
+    }
+
+    private boolean hasProperAuthorizationType(Member member, MemberAuthorizationType authorizationType) {
+        log.info("MemberService.hasProperAuthorizationType() called");
+
+        return member.getAuthorizedBy() == authorizationType;
     }
 }
