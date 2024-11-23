@@ -17,7 +17,8 @@ JWT, OAuth, Spring을 통한 채팅 서버 구현 연습 목적의 토이 프로
   - [x] Google OAuth를 이용한 회원가입/로그인
   - [x] 자체 회원가입/로그인
   - [x] 엑세스 토큰 재발급
-  - [ ] 회원 정보 수정
+  - [x] 회원 정보 수정
+  - [ ] 회원 삭제
 </details>
 <details>
   <summary>친구 관련 기능</summary>
