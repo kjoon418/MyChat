@@ -121,13 +121,4 @@ public class GoogleLoginService {
 
         throw new RuntimeException("유저 정보를 가져오는데 실패했습니다.");
     }
-
-    public Member test(Principal principal) {
-        log.info("GoogleLoginService.test() called");
-
-        Long id = Long.parseLong(principal.getName());
-
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
-    }
 }
