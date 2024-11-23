@@ -1,6 +1,7 @@
 package junwatson.mychat.dto.request;
 
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.domain.type.MemberAuthorizationType;
 import junwatson.mychat.domain.type.MemberRole;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import static lombok.AccessLevel.*;
 
+/**
+ * 다른 OAuth 를 이용하지 않고, 직접 MyChat 서비스를 통해 회원 가입하는 리퀘스트를 처리하는 DTO
+ */
 @Getter
 @NoArgsConstructor(access = PRIVATE)
 public class MemberSignUpRequestDto {
@@ -27,6 +31,7 @@ public class MemberSignUpRequestDto {
                 .password(password)
                 .profileUrl(profileUrl)
                 .role(MemberRole.USER)
+                .authorizedBy(MemberAuthorizationType.JUN_WATSON)
                 .build();
     }
 }

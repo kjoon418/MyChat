@@ -2,9 +2,11 @@ package junwatson.mychat.service;
 
 import com.google.gson.Gson;
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.domain.type.MemberAuthorizationType;
 import junwatson.mychat.domain.type.MemberRole;
 import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.dto.MemberInfoDto;
+import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -84,8 +86,13 @@ public class GoogleLoginService {
                         .name(userInfo.getName())
                         .profileUrl(userInfo.getPictureUrl())
                         .role(MemberRole.USER)
+                        .authorizedBy(MemberAuthorizationType.GOOGLE)
                         .build())
         );
+
+        if (member.getAuthorizedBy() != MemberAuthorizationType.GOOGLE) {
+            throw new IllegalMemberStateException("이미 다른 경로로 회원 가입한 이메일입니다.");
+        }
 
         return TokenDto.builder()
                 .accessToken(tokenProvider.createAccessToken(member))
