@@ -33,7 +33,6 @@ public class MemberController {
         return ResponseEntity.ok(responseDto);
     }
 
-
     @PostMapping("/friend")
     public ResponseEntity<MemberInfoResponseDto> createFriendship(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
         log.info("MemberController.createFriendship() called");

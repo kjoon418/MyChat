@@ -28,6 +28,7 @@ public class AuthorizationController {
         log.info("AuthorizationController.googleCallback() called");
 
         String googleAccessToken = googleLoginService.getGoogleAccessToken(code);
+
         return googleLoginService.loginOrSignUp(googleAccessToken);
     }
 
