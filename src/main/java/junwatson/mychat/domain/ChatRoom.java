@@ -2,11 +2,13 @@ package junwatson.mychat.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
@@ -20,6 +22,14 @@ public class ChatRoom {
 
     private String name;
 
-    @OneToMany(mappedBy = "chatRoom")
-    private List<MemberChatRoom> memberChatRooms = new ArrayList<>();
+    @OneToMany(mappedBy = "chatRoom", cascade = ALL, orphanRemoval = true)
+    private final List<MemberChatRoom> memberChatRooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chatRoom", cascade = ALL, orphanRemoval = true)
+    private final List<SystemChat> systemChats = new ArrayList<>();
+
+    @Builder
+    private ChatRoom(String name) {
+        this.name = name;
+    }
 }
