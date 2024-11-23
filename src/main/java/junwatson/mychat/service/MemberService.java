@@ -73,12 +73,12 @@ public class MemberService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
-    public Member findById(Long memberId) {
-        log.info("MemberService.findById() called");
+    public MemberInfoResponseDto withdrawMembership(Member member) {
+        log.info("MemberService.withdrawMembership() called");
 
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotExistsException("해당 ID를 지닌 회원이 존재하지 않습니다."));
+        Member deletedMember = memberRepository.delete(member);
+
+        return MemberInfoResponseDto.from(deletedMember);
     }
 
     public MemberInfoResponseDto updateMember(Member member, MemberModificationRequestDto requestDto) {
@@ -126,6 +126,14 @@ public class MemberService {
         }
 
         return MemberInfoResponseDto.from(member);
+    }
+
+    @Transactional(readOnly = true)
+    public Member findById(Long memberId) {
+        log.info("MemberService.findById() called");
+
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotExistsException("해당 ID를 지닌 회원이 존재하지 않습니다."));
     }
 
     public ReissueAccessTokenResponseDto reissueAccessToken(HttpServletRequest request) {

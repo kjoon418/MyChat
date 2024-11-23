@@ -33,6 +33,17 @@ public class MemberController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @DeleteMapping
+    public ResponseEntity<MemberInfoResponseDto> withdrawMembership(Principal principal) {
+        log.info("MemberController.withdrawMembership() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        MemberInfoResponseDto responseDto = memberService.withdrawMembership(member);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
     @PostMapping("/friend")
     public ResponseEntity<MemberInfoResponseDto> createFriendship(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
         log.info("MemberController.createFriendship() called");

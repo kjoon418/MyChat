@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +69,22 @@ public class MemberRepository {
         log.info("MemberRepository.save() called");
 
         em.persist(member);
+
+        return member;
+    }
+
+    public Member delete(Member member) {
+        log.info("MemberRepository.delete() called");
+
+        // 회원을 삭제하기 전, 모든 관련된 친구관계를 삭제함
+        List<Friendship> removeFriendships = new ArrayList<>(member.getFriendships());
+        for (Friendship friendship : removeFriendships) {
+            friendshipDao.removeFriendship(member, friendship.getFriendMember());
+        }
+
+        // 삭제 결과를 DB에 반영한 후 회원을 삭제하도록 해서 DB 오류를 방지함
+        em.flush();
+        em.remove(member);
 
         return member;
     }
