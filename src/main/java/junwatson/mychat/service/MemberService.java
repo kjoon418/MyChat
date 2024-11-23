@@ -85,7 +85,7 @@ public class MemberService {
         log.info("MemberService.updateMember()");
 
         // Google 인증을 통한 회원은 수정할 수 없게 함
-        if (hasProperAuthorizationType(member, MemberAuthorizationType.GOOGLE)) {
+        if (member.getAuthorizedBy() == MemberAuthorizationType.GOOGLE) {
             throw new IllegalMemberStateException("구글 회원의 정보는 수정할 수 없습니다.");
         }
 
@@ -310,11 +310,5 @@ public class MemberService {
         }
 
         return false;
-    }
-
-    private boolean hasProperAuthorizationType(Member member, MemberAuthorizationType authorizationType) {
-        log.info("MemberService.hasProperAuthorizationType() called");
-
-        return member.getAuthorizedBy() == authorizationType;
     }
 }
