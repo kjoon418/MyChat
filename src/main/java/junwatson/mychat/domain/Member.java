@@ -1,6 +1,7 @@
 package junwatson.mychat.domain;
 
 import jakarta.persistence.*;
+import junwatson.mychat.domain.type.MemberAuthorizationType;
 import junwatson.mychat.domain.type.MemberRole;
 import lombok.*;
 
@@ -46,6 +47,8 @@ public class Member {
 
     @Enumerated(STRING)
     private MemberRole role;
+    @Enumerated(STRING)
+    private MemberAuthorizationType authorizedBy;
 
     @Column(unique = true, nullable = false)
     @Setter
@@ -59,8 +62,9 @@ public class Member {
     private String profileUrl;
 
     @Builder
-    private Member(MemberRole role, String email, String name, String password, String profileUrl) {
+    private Member(MemberRole role, String email, String name, String password, String profileUrl, MemberAuthorizationType authorizedBy) {
         this.role = role;
+        this.authorizedBy = authorizedBy;
         this.email = email;
         this.name = name;
         this.password = password;
