@@ -96,15 +96,24 @@ public class MemberService {
         boolean updated = false;
 
         if (StringUtils.hasText(email)) {
+            if (isIllegalString(email) || memberRepository.findByEmail(email).isPresent()) {
+                throw new IllegalArgumentException("형식이 부적절하거나 이미 사용되고 있는 이메일입니다.");
+            }
             memberRepository.updateEmail(member, email);
             updated = true;
         }
         if (StringUtils.hasText(password)) {
+            if (isIllegalString(password)) {
+                throw new IllegalArgumentException("부적절한 비밀번호입니다.");
+            }
             memberRepository.updatePassword(member, password);
             updated = true;
         }
         if (StringUtils.hasText(name)) {
-            memberRepository.updatePassword(member, name);
+            if (isIllegalString(name)) {
+                throw new IllegalArgumentException("부적절한 이름입니다.");
+            }
+            memberRepository.updateName(member, name);
             updated = true;
         }
         if (StringUtils.hasText(profileUrl)) {
