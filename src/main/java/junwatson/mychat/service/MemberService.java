@@ -84,11 +84,6 @@ public class MemberService {
     public MemberInfoResponseDto updateMember(Member member, MemberModificationRequestDto requestDto) {
         log.info("MemberService.updateMember()");
 
-        // Google 인증을 통한 회원은 수정할 수 없게 함
-        if (member.getAuthorizedBy() == MemberAuthorizationType.GOOGLE) {
-            throw new IllegalMemberStateException("구글 회원의 정보는 수정할 수 없습니다.");
-        }
-
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
         String name = requestDto.getName();
@@ -96,6 +91,10 @@ public class MemberService {
         boolean updated = false;
 
         if (StringUtils.hasText(email)) {
+            // 구글 회원의 이메일은 수정할 수 없게 함
+            if (member.getAuthorizedBy() == MemberAuthorizationType.GOOGLE) {
+                throw new IllegalMemberStateException("구글을 통해 회원가입한 회원은 이메일을 수정할 수 없습니다.");
+            }
             if (isIllegalString(email) || memberRepository.findByEmail(email).isPresent()) {
                 throw new IllegalArgumentException("형식이 부적절하거나 이미 사용되고 있는 이메일입니다.");
             }
