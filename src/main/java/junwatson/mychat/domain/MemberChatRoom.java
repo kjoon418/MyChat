@@ -3,6 +3,7 @@ package junwatson.mychat.domain;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import static lombok.AccessLevel.*;
 @Entity
 @NoArgsConstructor(access = PROTECTED)
 @Table(uniqueConstraints = {@UniqueConstraint(name = "member_chat_room_unique", columnNames = {"member_id", "chat_room_id"})})
+@Getter
 public class MemberChatRoom {
 
     @Id
