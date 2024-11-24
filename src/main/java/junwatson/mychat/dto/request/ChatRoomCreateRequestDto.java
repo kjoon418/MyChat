@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class ChatRoomInfoRequestDto {
+public class ChatRoomCreateRequestDto {
 
     private String name;
     private String profileUrl;
