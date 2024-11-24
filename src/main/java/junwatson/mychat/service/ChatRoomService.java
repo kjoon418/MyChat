@@ -2,8 +2,12 @@ package junwatson.mychat.service;
 
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.domain.MemberChatRoom;
 import junwatson.mychat.dto.request.ChatRoomCreateRequestDto;
+import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
+import junwatson.mychat.exception.ChatRoomNotExistsException;
+import junwatson.mychat.exception.IllegalChatRoomStateException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.repository.ChatRoomRepository;
 import junwatson.mychat.repository.MemberRepository;
@@ -36,6 +40,15 @@ public class ChatRoomService {
         for (Member member : members) {
             chatRoomRepository.createMemberChatRoom(member, chatRoom);
         }
+
+        return ChatRoomInfoResponseDto.from(chatRoom);
+    }
+
+    public ChatRoomInfoResponseDto leaveChatRoom(Member member, ChatRoomInfoRequestDto requestDto) {
+        ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getId())
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
+
+        chatRoomRepository.leaveChatRoom(member, chatRoom);
 
         return ChatRoomInfoResponseDto.from(chatRoom);
     }

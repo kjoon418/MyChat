@@ -2,6 +2,7 @@ package junwatson.mychat.controller;
 
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.ChatRoomCreateRequestDto;
+import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
 import junwatson.mychat.service.ChatRoomService;
 import junwatson.mychat.service.MemberService;
@@ -39,4 +40,14 @@ public class ChatRoomController {
         return ResponseEntity.status(CREATED).body(responseDto);
     }
 
+    @DeleteMapping
+    public ResponseEntity<ChatRoomInfoResponseDto> leaveChatRoom(@RequestBody ChatRoomInfoRequestDto requestDto, Principal principal) {
+        log.info("ChatRoomController.leaveChatRoom() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        ChatRoomInfoResponseDto responseDto = chatRoomService.leaveChatRoom(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
 }

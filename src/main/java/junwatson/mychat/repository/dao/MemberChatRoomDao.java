@@ -5,6 +5,8 @@ import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class MemberChatRoomDao {
 
@@ -18,5 +20,11 @@ public class MemberChatRoomDao {
         chatRoom.getMemberChatRooms().add(memberChatRoom);
 
         return memberChatRoom;
+    }
+
+    public Optional<MemberChatRoom> findByMemberAndChatRoom(Member member, ChatRoom chatRoom) {
+        return member.getMemberChatRooms().stream()
+                .filter(memberChatRoom -> memberChatRoom.getChatRoom().equals(chatRoom))
+                .findAny();
     }
 }

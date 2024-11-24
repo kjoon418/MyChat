@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
+import junwatson.mychat.exception.ChatRoomNotExistsException;
 import junwatson.mychat.repository.dao.MemberChatRoomDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -54,6 +55,24 @@ public class ChatRoomRepository {
 
     public MemberChatRoom createMemberChatRoom(Member member, ChatRoom chatRoom) {
         return memberChatRoomDao.createMemberChatRoom(member, chatRoom);
+    }
+
+    public void leaveChatRoom(Member member, ChatRoom chatRoom) {
+        MemberChatRoom memberChatRoom = memberChatRoomDao.findByMemberAndChatRoom(member, chatRoom)
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방에 소속되지 않았습니다."));
+
+        member.getMemberChatRooms()
+                .remove(memberChatRoom);
+        chatRoom.getMemberChatRooms()
+                .remove(memberChatRoom);
+
+        if (isEmptyChatRoom(chatRoom)) {
+            em.remove(chatRoom);
+        }
+    }
+
+    private boolean isEmptyChatRoom(ChatRoom chatRoom) {
+        return chatRoom.getMemberChatRooms().isEmpty();
     }
 
     private BooleanExpression nameLike(String name) {
