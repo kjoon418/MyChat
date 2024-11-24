@@ -44,6 +44,17 @@ public class MemberController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/expiration")
+    public ResponseEntity<String> logout(Principal principal) {
+        log.info("MemberController.logout() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        memberService.logout(member);
+
+        return ResponseEntity.ok("로그아웃이 완료되었습니다.");
+    }
+
     @PostMapping("/friend")
     public ResponseEntity<MemberInfoResponseDto> createFriendship(@RequestBody MemberInfoRequestDto requestDto, Principal principal) {
         log.info("MemberController.createFriendship() called");

@@ -80,6 +80,12 @@ public class MemberRepository {
         return member;
     }
 
+    public void removeRefreshToken(Member member) {
+        log.info("MemberRepository.removeRefreshToken() called");
+
+        refreshTokenDao.removeRefreshToken(member);
+    }
+
     public Member updateEmail(Member member, String email) {
         log.info("MemberRepository.updateEmail() called");
 

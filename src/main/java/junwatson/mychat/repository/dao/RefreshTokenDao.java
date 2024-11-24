@@ -23,6 +23,8 @@ import static junwatson.mychat.jwt.TokenConstant.*;
 public class RefreshTokenDao {
 
     public RefreshToken createRefreshToken(Member member) {
+        log.info("TokenProvider.createRefreshToken() called");
+
         String refreshTokenString = createRefreshTokenString(member);
 
         RefreshToken refreshToken = RefreshToken.builder()
@@ -33,7 +35,15 @@ public class RefreshTokenDao {
         return refreshToken;
     }
 
+    public void removeRefreshToken(Member member) {
+        log.info("TokenProvider.removeRefreshToken() called");
+
+        member.setRefreshToken(null);
+    }
+
     public boolean isValidateRefreshToken(Member member, String token) {
+        log.info("TokenProvider.isValidateRefreshToken() called");
+
         if (member == null || member.getRefreshToken() == null) {
             return false;
         }
@@ -44,7 +54,7 @@ public class RefreshTokenDao {
     }
 
     private String createRefreshTokenString(Member member) {
-        log.info("TokenProvider.createRefreshToken() called");
+        log.info("TokenProvider.createRefreshTokenString() called");
 
         long nowTime = (new Date().getTime());
 

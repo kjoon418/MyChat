@@ -75,6 +75,12 @@ public class MemberService {
                 .build();
     }
 
+    public void logout(Member member) {
+        log.info("MemberService.logout() called");
+
+        memberRepository.removeRefreshToken(member);
+    }
+
     public MemberInfoResponseDto withdrawMembership(Member member) {
         log.info("MemberService.withdrawMembership() called");
 
