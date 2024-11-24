@@ -2,6 +2,7 @@ package junwatson.mychat.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -31,7 +32,14 @@ public class MemberChatRoom {
     private ChatRoom chatRoom;
 
     @OneToMany(fetch = LAZY, orphanRemoval = true, cascade = ALL)
-    private List<Chat> chats = new ArrayList<>();
+    private final List<Chat> chats = new ArrayList<>();
 
     private LocalDateTime view_date;
+
+    @Builder
+    private MemberChatRoom(Member member, ChatRoom chatRoom) {
+        this.member = member;
+        this.chatRoom = chatRoom;
+        this.view_date = LocalDateTime.now();
+    }
 }
