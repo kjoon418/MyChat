@@ -3,6 +3,7 @@ package junwatson.mychat.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import junwatson.mychat.domain.Chat;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
@@ -11,6 +12,7 @@ import junwatson.mychat.repository.dao.MemberChatRoomDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +70,14 @@ public class ChatRoomRepository {
 
         if (isEmptyChatRoom(chatRoom)) {
             em.remove(chatRoom);
+        }
+    }
+
+    public void leaveAllChatRooms(Member member) {
+        List<MemberChatRoom> removeChatRooms = new ArrayList<>(member.getMemberChatRooms());
+
+        for (MemberChatRoom memberChatRoom : removeChatRooms) {
+            leaveChatRoom(member, memberChatRoom.getChatRoom());
         }
     }
 

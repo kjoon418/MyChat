@@ -9,11 +9,9 @@ import junwatson.mychat.exception.IllegalRefreshTokenException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.repository.condition.MemberSearchCondition;
-import junwatson.mychat.repository.dao.BlacklistDao;
-import junwatson.mychat.repository.dao.FriendshipDao;
-import junwatson.mychat.repository.dao.FriendshipRequestDao;
-import junwatson.mychat.repository.dao.RefreshTokenDao;
+import junwatson.mychat.repository.dao.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -76,13 +74,6 @@ public class MemberRepository {
     public Member delete(Member member) {
         log.info("MemberRepository.delete() called");
 
-        // 회원을 삭제하기 전, 모든 관련된 친구관계를 삭제함
-        List<Friendship> removeFriendships = new ArrayList<>(member.getFriendships());
-        for (Friendship friendship : removeFriendships) {
-            friendshipDao.removeFriendship(member, friendship.getFriendMember());
-        }
-
-        // 삭제 결과를 DB에 반영한 후 회원을 삭제하도록 해서 DB 오류를 방지함
         em.flush();
         em.remove(member);
 
@@ -154,6 +145,15 @@ public class MemberRepository {
         log.info("MemberRepository.isSentFriendshipRequestExists() called");
 
         return friendshipRequestDao.isSentFriendshipRequestExists(member, friend);
+    }
+
+    public void removeAllFriendships(Member member) {
+        log.info("MemberRepository.removeAllFriendships() called");
+
+        List<Friendship> removeFriendships = new ArrayList<>(member.getFriendships());
+        for (Friendship friendship : removeFriendships) {
+            friendshipDao.removeFriendship(member, friendship.getFriendMember());
+        }
     }
 
     public boolean isBlocked(Member member, Member target) {

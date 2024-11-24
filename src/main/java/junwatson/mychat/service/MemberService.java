@@ -15,6 +15,7 @@ import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.exception.IllegalSearchConditionException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.jwt.TokenProvider;
+import junwatson.mychat.repository.ChatRoomRepository;
 import junwatson.mychat.repository.MemberRepository;
 import junwatson.mychat.repository.condition.MemberSearchCondition;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,10 @@ import java.util.Set;
 @Slf4j
 public class MemberService {
 
-    private final MemberRepository memberRepository;
     private final HashSet<Character> allowedWords = new HashSet<>(Set.of('!', '@', '#', '$', '%', '^', '&', '~', '.'));
     private final TokenProvider tokenProvider;
+    private final MemberRepository memberRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public TokenDto signUp(MemberSignUpRequestDto requestDto) {
         log.info("MemberService.signUp() called");
@@ -75,6 +77,9 @@ public class MemberService {
 
     public MemberInfoResponseDto withdrawMembership(Member member) {
         log.info("MemberService.withdrawMembership() called");
+
+        memberRepository.removeAllFriendships(member);
+        chatRoomRepository.leaveAllChatRooms(member);
 
         Member deletedMember = memberRepository.delete(member);
 
