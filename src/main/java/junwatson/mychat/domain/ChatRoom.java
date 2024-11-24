@@ -22,7 +22,9 @@ public class ChatRoom {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
+    private String profileUrl;
 
     @OneToMany(mappedBy = "chatRoom", cascade = ALL, orphanRemoval = true)
     private final List<MemberChatRoom> memberChatRooms = new ArrayList<>();
@@ -31,7 +33,8 @@ public class ChatRoom {
     private final List<SystemChat> systemChats = new ArrayList<>();
 
     @Builder
-    private ChatRoom(String name) {
+    private ChatRoom(String name, String profileUrl) {
         this.name = name;
+        this.profileUrl = profileUrl;
     }
 }

@@ -10,17 +10,18 @@ import java.util.List;
 public class ChatRoomInfoRequestDto {
 
     private String name;
+    private String profileUrl;
     private final List<Friend> friends = new ArrayList<>();
 
     public ChatRoom toEntity() {
         return ChatRoom.builder()
                 .name(name)
+                .profileUrl(profileUrl)
                 .build();
     }
 
     @Getter
     public static class Friend {
-
         private String email;
     }
 }
