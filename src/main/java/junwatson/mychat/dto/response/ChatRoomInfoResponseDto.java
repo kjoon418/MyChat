@@ -23,7 +23,7 @@ public class ChatRoomInfoResponseDto {
      */
     public static ChatRoomInfoResponseDto from(MemberChatRoom memberChatRoom) {
         String name = memberChatRoom.getAliasName() == null ? memberChatRoom.getChatRoom().getName() : memberChatRoom.getAliasName();
-        String profileUrl = memberChatRoom.getAliasProfileUrl() == null ? memberChatRoom.getChatRoom().getName() : memberChatRoom.getAliasProfileUrl();
+        String profileUrl = memberChatRoom.getAliasProfileUrl() == null ? memberChatRoom.getChatRoom().getProfileUrl() : memberChatRoom.getAliasProfileUrl();
 
         return ChatRoomInfoResponseDto.builder()
                 .id(memberChatRoom.getChatRoom().getId())
