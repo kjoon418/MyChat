@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -30,10 +31,20 @@ public class ChatRoomController {
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-
         ChatRoomInfoResponseDto responseDto = chatRoomService.createChatRoom(member, requestDto);
 
         return ResponseEntity.status(CREATED).body(responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ChatRoomInfoResponseDto>> findChatRooms(Principal principal) {
+        log.info("ChatRoomController.findChatRooms() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        List<ChatRoomInfoResponseDto> responseDto = chatRoomService.findChatRooms(member);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping
@@ -58,9 +69,6 @@ public class ChatRoomController {
         return ResponseEntity.ok(responseDto);
     }
 
-    /**
-     * 테스트 필요
-     */
     @PatchMapping
     public ResponseEntity<ChatRoomInfoResponseDto> modifyChatRoom(@RequestBody ChatRoomModificationRequestDto requestDto, Principal principal) {
         log.info("ChatRoomController.modifyChatRoom() called");

@@ -46,6 +46,42 @@ public class ChatRoomService {
         return ChatRoomInfoResponseDto.from(memberChatRoom);
     }
 
+    public List<ChatRoomInfoResponseDto> findChatRooms(Member member) {
+        log.info("ChatRoomService.findChatRooms() called");
+
+        List<ChatRoomInfoResponseDto> responseDto = new ArrayList<>();
+        for (MemberChatRoom memberChatRoom : member.getMemberChatRooms()) {
+            responseDto.add(ChatRoomInfoResponseDto.from(memberChatRoom));
+        }
+
+        return responseDto;
+    }
+
+    /**
+     * 방의 이름이나 프로필을 본인에게만 변경할 것이기 때문에, ChatRoom 엔티티의 정보를 수정하지 않고 MemberChatRoom 엔티티의 정보를 수정한다
+     */
+    public ChatRoomInfoResponseDto modifyChatRoom(Member member, ChatRoomModificationRequestDto requestDto) {
+        log.info("ChatRoomService.modifyChatRoom() called");
+
+        ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getId())
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
+        MemberChatRoom findMemberChatRoom = member.getMemberChatRooms().stream()
+                .filter(memberChatRoom -> memberChatRoom.getChatRoom().equals(chatRoom))
+                .findAny()
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방에 소속되지 않았습니다."));
+
+        String name = requestDto.getName();
+        String profileUrl = requestDto.getProfileUrl();
+        if (StringUtils.hasText(name)) {
+            findMemberChatRoom.setAliasName(name);
+        }
+        if (StringUtils.hasText(profileUrl)) {
+            findMemberChatRoom.setAliasProfileUrl(profileUrl);
+        }
+
+        return ChatRoomInfoResponseDto.from(findMemberChatRoom);
+    }
+
     public ChatRoomInfoResponseDto leaveChatRoom(Member member, ChatRoomInfoRequestDto requestDto) {
         log.info("ChatRoomService.leaveChatRoom() called");
 
@@ -74,31 +110,6 @@ public class ChatRoomService {
         }
         for (Member member : members) {
             chatRoomRepository.createMemberChatRoom(member, chatRoom);
-        }
-
-        return ChatRoomInfoResponseDto.from(findMemberChatRoom);
-    }
-
-    /**
-     * 방의 이름이나 프로필을 본인에게만 변경할 것이기 때문에, ChatRoom 엔티티의 정보를 수정하지 않고 MemberChatRoom 엔티티의 정보를 수정한다
-     */
-    public ChatRoomInfoResponseDto modifyChatRoom(Member member, ChatRoomModificationRequestDto requestDto) {
-        log.info("ChatRoomService.modifyChatRoom() called");
-
-        ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getId())
-                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
-        MemberChatRoom findMemberChatRoom = member.getMemberChatRooms().stream()
-                .filter(memberChatRoom -> memberChatRoom.getChatRoom().equals(chatRoom))
-                .findAny()
-                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방에 소속되지 않았습니다."));
-
-        String name = requestDto.getName();
-        String profileUrl = requestDto.getProfileUrl();
-        if (StringUtils.hasText(name)) {
-            findMemberChatRoom.setAliasName(name);
-        }
-        if (StringUtils.hasText(profileUrl)) {
-            findMemberChatRoom.setAliasProfileUrl(profileUrl);
         }
 
         return ChatRoomInfoResponseDto.from(findMemberChatRoom);
