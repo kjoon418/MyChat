@@ -1,10 +1,7 @@
 package junwatson.mychat.controller;
 
 import junwatson.mychat.domain.Member;
-import junwatson.mychat.dto.request.ChatRoomCreateRequestDto;
-import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
-import junwatson.mychat.dto.request.ChatRoomInviteRequestDto;
-import junwatson.mychat.dto.request.MemberInfoRequestDto;
+import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
 import junwatson.mychat.service.ChatRoomService;
 import junwatson.mychat.service.MemberService;
@@ -57,6 +54,20 @@ public class ChatRoomController {
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
         ChatRoomInfoResponseDto responseDto = chatRoomService.inviteChatRoom(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    /**
+     * 테스트 필요
+     */
+    @PatchMapping
+    public ResponseEntity<ChatRoomInfoResponseDto> modifyChatRoom(@RequestBody ChatRoomModificationRequestDto requestDto, Principal principal) {
+        log.info("ChatRoomController.modifyChatRoom() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        ChatRoomInfoResponseDto responseDto = chatRoomService.modifyChatRoom(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }

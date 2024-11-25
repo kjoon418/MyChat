@@ -59,7 +59,7 @@ public class ChatRoomRepository {
         return memberChatRoomDao.createMemberChatRoom(member, chatRoom);
     }
 
-    public void leaveChatRoom(Member member, ChatRoom chatRoom) {
+    public MemberChatRoom leaveChatRoom(Member member, ChatRoom chatRoom) {
         MemberChatRoom memberChatRoom = memberChatRoomDao.findByMemberAndChatRoom(member, chatRoom)
                 .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방에 소속되지 않았습니다."));
 
@@ -71,6 +71,8 @@ public class ChatRoomRepository {
         if (isEmptyChatRoom(chatRoom)) {
             em.remove(chatRoom);
         }
+
+        return memberChatRoom;
     }
 
     public void leaveAllChatRooms(Member member) {

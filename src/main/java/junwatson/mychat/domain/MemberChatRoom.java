@@ -1,10 +1,7 @@
 package junwatson.mychat.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,7 +35,10 @@ public class MemberChatRoom {
 
     private LocalDateTime view_date;
 
-    private String alias;
+    @Setter
+    private String aliasName;
+    @Setter
+    private String aliasProfileUrl;
 
     @Builder
     private MemberChatRoom(Member member, ChatRoom chatRoom) {
