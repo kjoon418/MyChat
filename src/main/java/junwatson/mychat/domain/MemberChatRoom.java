@@ -38,6 +38,8 @@ public class MemberChatRoom {
 
     private LocalDateTime view_date;
 
+    private String alias;
+
     @Builder
     private MemberChatRoom(Member member, ChatRoom chatRoom) {
         this.member = member;

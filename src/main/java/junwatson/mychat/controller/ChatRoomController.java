@@ -3,6 +3,8 @@ package junwatson.mychat.controller;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.ChatRoomCreateRequestDto;
 import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
+import junwatson.mychat.dto.request.ChatRoomInviteRequestDto;
+import junwatson.mychat.dto.request.MemberInfoRequestDto;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
 import junwatson.mychat.service.ChatRoomService;
 import junwatson.mychat.service.MemberService;
@@ -10,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -47,6 +46,17 @@ public class ChatRoomController {
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
         ChatRoomInfoResponseDto responseDto = chatRoomService.leaveChatRoom(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/invitation")
+    public ResponseEntity<ChatRoomInfoResponseDto> inviteChatRoom(@RequestBody ChatRoomInviteRequestDto requestDto, Principal principal) {
+        log.info("ChatRoomController.inviteChatRoom() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        ChatRoomInfoResponseDto responseDto = chatRoomService.inviteChatRoom(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }
