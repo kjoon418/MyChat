@@ -46,7 +46,7 @@ public class Member {
     private final List<Blacklist> blockedLists = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = ALL, orphanRemoval = true)
-    private final List<UserChat> userChats = new ArrayList<>();
+    private final List<Chat> chats = new ArrayList<>();
 
     @Enumerated(STRING)
     private MemberRole role;

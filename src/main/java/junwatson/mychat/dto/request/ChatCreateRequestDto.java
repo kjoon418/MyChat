@@ -1,8 +1,9 @@
 package junwatson.mychat.dto.request;
 
-import junwatson.mychat.domain.UserChat;
+import junwatson.mychat.domain.Chat;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.domain.type.ChatType;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -13,12 +14,13 @@ public class ChatCreateRequestDto {
     private Long chatRoomId;
     private String content;
 
-    public UserChat toEntityWithMemberChatRoom(Member member, ChatRoom chatRoom) {
-        return UserChat.builder()
+    public Chat toEntityWithMemberChatRoom(Member member, ChatRoom chatRoom) {
+        return Chat.builder()
                 .member(member)
                 .chatRoom(chatRoom)
                 .content(content)
                 .inputDate(LocalDateTime.now())
+                .chatType(ChatType.USER)
                 .build();
     }
 }

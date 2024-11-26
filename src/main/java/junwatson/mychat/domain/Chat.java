@@ -1,31 +1,54 @@
 package junwatson.mychat.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
+import junwatson.mychat.domain.type.ChatType;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@MappedSuperclass
+import static jakarta.persistence.EnumType.*;
+import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
+import static lombok.AccessLevel.*;
+
+@Entity
+@NoArgsConstructor(access = PROTECTED)
 @Getter
-public abstract class Chat implements Comparable<Chat> {
+public class Chat implements Comparable<Chat> {
 
-    @Column(nullable = false)
-    protected LocalDateTime inputDate;
-    @Column(nullable = false)
-    protected String content;
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
 
-    /**
-     * 입력 날짜에 대해 내림차순으로 정렬하게 함
-     */
+    @JoinColumn
+    @ManyToOne(fetch = LAZY)
+    private Member member;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = LAZY)
+    private ChatRoom chatRoom;
+
+    @Setter
+    private String content;
+    @Setter
+    private LocalDateTime inputDate;
+    @Enumerated(STRING)
+    private ChatType chatType;
+
+    @Builder
+    private Chat(Member member, ChatRoom chatRoom, String content, LocalDateTime inputDate, ChatType chatType) {
+        this.member = member;
+        this.chatRoom = chatRoom;
+        this.content = content;
+        this.inputDate = inputDate;
+        this.chatType = chatType;
+    }
+
     @Override
     public int compareTo(Chat o) {
-        if (this.inputDate.isAfter(o.inputDate)) {
-            return -1;
-        } else if (this.inputDate.isEqual(o.inputDate)) {
-            return 0;
-        }
-
-        return 1;
+        return inputDate.compareTo(o.inputDate) * -1;
     }
 }

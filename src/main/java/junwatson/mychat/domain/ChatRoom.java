@@ -29,10 +29,7 @@ public class ChatRoom {
     private final List<MemberChatRoom> memberChatRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatRoom", cascade = ALL, orphanRemoval = true)
-    private final List<SystemChat> systemChats = new ArrayList<>();
-
-    @OneToMany(mappedBy = "chatRoom", cascade = ALL, orphanRemoval = true)
-    private final List<UserChat> userChats = new ArrayList<>();
+    private final List<Chat> chats = new ArrayList<>();
 
     @Builder
     private ChatRoom(String name, String profileUrl) {

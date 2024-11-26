@@ -1,14 +1,17 @@
 package junwatson.mychat.service;
 
-import junwatson.mychat.domain.UserChat;
+import junwatson.mychat.domain.Chat;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
 import junwatson.mychat.dto.request.ChatCreateRequestDto;
+import junwatson.mychat.dto.request.ChatSearchRequestDto;
 import junwatson.mychat.dto.response.ChatInfoResponseDto;
 import junwatson.mychat.exception.ChatRoomNotExistsException;
 import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.repository.ChatRoomRepository;
+import junwatson.mychat.repository.condition.ChatSearchCondition;
+import junwatson.mychat.repository.dao.ChatDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,8 +27,9 @@ import java.util.List;
 public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatDao chatDao;
 
-    public ChatInfoResponseDto createChat(Member member, ChatCreateRequestDto requestDto) {
+    public ChatInfoResponseDto createUserChat(Member member, ChatCreateRequestDto requestDto) {
         log.info("ChatService.createChat() called");
 
         ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getChatRoomId())
@@ -36,22 +40,36 @@ public class ChatService {
                 .orElseThrow(() -> new IllegalMemberStateException("해당 채팅방에 소속되어 있지 않습니다."));
         memberChatRoom1.setViewDate(LocalDateTime.now());
 
-        UserChat userChat = requestDto.toEntityWithMemberChatRoom(member, chatRoom);
-        member.getUserChats().add(userChat);
-        chatRoom.getUserChats().add(userChat);
+        Chat chat = requestDto.toEntityWithMemberChatRoom(member, chatRoom);
+        member.getChats().add(chat);
+        chatRoom.getChats().add(chat);
 
-        return ChatInfoResponseDto.of(userChat, calculateUnconfirmedCounter(userChat, chatRoom));
+        return ChatInfoResponseDto.of(chat, calculateUnconfirmedCounter(chat, chatRoom));
     }
 
     public List<ChatInfoResponseDto> readChats(Member member, ChatRoom chatRoom) {
         log.info("ChatService.readChats() called");
 
         MemberChatRoom memberChatRoom = chatRoomRepository.findMemberChatRoom(member, chatRoom)
-                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방에 소속되지 않았습니다."));
         memberChatRoom.setViewDate(LocalDateTime.now());
 
-        return chatRoom.getUserChats().stream()
+        return chatDao.searchByCondition(chatRoom, ChatSearchCondition.noCondition()).stream()
                 .sorted()
+                .map(chat -> {
+                    int unconfirmedCounter = calculateUnconfirmedCounter(chat, chatRoom);
+                    return ChatInfoResponseDto.of(chat, unconfirmedCounter);
+                })
+                .toList();
+    }
+
+    public List<ChatInfoResponseDto> searchChats(Member member, ChatSearchRequestDto requestDto) {
+        log.info("ChatService.searchChats() called");
+
+        ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getId())
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
+
+        return chatDao.searchByCondition(chatRoom, requestDto.toCondition()).stream()
                 .map(chat -> {
                     int unconfirmedCounter = calculateUnconfirmedCounter(chat, chatRoom);
                     return ChatInfoResponseDto.of(chat, unconfirmedCounter);
@@ -62,7 +80,7 @@ public class ChatService {
     /**
      * 채팅방의 회원 중 몇 명이나 해당 채팅을 읽지 않았는지를 반환하는 메서드
      */
-    private int calculateUnconfirmedCounter(UserChat userChat, ChatRoom chatRoom) {
+    private int calculateUnconfirmedCounter(Chat chat, ChatRoom chatRoom) {
         log.info("ChatService.calculateUnconfirmedCounter() called");
 
         int count = 0;
@@ -70,7 +88,7 @@ public class ChatService {
                 .map(MemberChatRoom::getViewDate)
                 .toList();
         for (LocalDateTime viewDate : viewDates) {
-            if (userChat.getInputDate().isAfter(viewDate)) {
+            if (chat.getInputDate().isAfter(viewDate)) {
                 count++;
             }
         }
