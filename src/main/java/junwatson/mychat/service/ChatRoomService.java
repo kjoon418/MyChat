@@ -5,8 +5,10 @@ import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
+import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.exception.ChatRoomNotExistsException;
 import junwatson.mychat.exception.IllegalChatRoomStateException;
+import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.repository.ChatRoomRepository;
 import junwatson.mychat.repository.MemberRepository;
@@ -18,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,12 +49,38 @@ public class ChatRoomService {
         return ChatRoomInfoResponseDto.from(memberChatRoom);
     }
 
+    public ChatRoom findChatRoomByDto(ChatRoomInfoRequestDto requestDto) {
+        return chatRoomRepository.findById(requestDto.getId())
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
+    }
+
     public List<ChatRoomInfoResponseDto> findChatRooms(Member member) {
         log.info("ChatRoomService.findChatRooms() called");
 
         List<ChatRoomInfoResponseDto> responseDto = new ArrayList<>();
         for (MemberChatRoom memberChatRoom : member.getMemberChatRooms()) {
             responseDto.add(ChatRoomInfoResponseDto.from(memberChatRoom));
+        }
+
+        return responseDto;
+    }
+
+    public List<MemberInfoResponseDto> findMembersInChatRoom(Member requestMember, ChatRoom chatRoom) {
+        log.info("ChatRoomService.findMembersInChatRoom() called");
+
+        boolean isPresent = requestMember.getMemberChatRooms().stream()
+                .map(MemberChatRoom::getChatRoom)
+                .anyMatch(findChatRoom -> findChatRoom.equals(chatRoom));
+        if (!isPresent) {
+            throw new IllegalMemberStateException("해당 채팅방에 소속되어있지 않습니다.");
+        }
+
+        List<Member> members = chatRoom.getMemberChatRooms().stream()
+                .map(MemberChatRoom::getMember)
+                .toList();
+        List<MemberInfoResponseDto> responseDto = new ArrayList<>();
+        for (Member member : members) {
+            responseDto.add(MemberInfoResponseDto.from(member));
         }
 
         return responseDto;

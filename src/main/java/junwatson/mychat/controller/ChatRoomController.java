@@ -1,8 +1,10 @@
 package junwatson.mychat.controller;
 
+import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
+import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.service.ChatRoomService;
 import junwatson.mychat.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +67,18 @@ public class ChatRoomController {
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
         ChatRoomInfoResponseDto responseDto = chatRoomService.inviteChatRoom(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<List<MemberInfoResponseDto>> findMembersByChatRoom(@RequestBody ChatRoomInfoRequestDto requestDto, Principal principal) {
+        log.info("ChatRoomController.findMembersByChatRoom() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        ChatRoom chatRoom = chatRoomService.findChatRoomByDto(requestDto);
+        List<MemberInfoResponseDto> responseDto = chatRoomService.findMembersInChatRoom(member, chatRoom);
 
         return ResponseEntity.ok(responseDto);
     }
