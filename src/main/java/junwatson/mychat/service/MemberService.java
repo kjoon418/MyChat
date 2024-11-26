@@ -18,6 +18,7 @@ import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.repository.ChatRoomRepository;
 import junwatson.mychat.repository.MemberRepository;
 import junwatson.mychat.repository.condition.MemberSearchCondition;
+import junwatson.mychat.repository.dao.ChatDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatDao chatDao;
 
     public TokenDto signUp(MemberSignUpRequestDto requestDto) {
         log.info("MemberService.signUp() called");
@@ -86,6 +88,7 @@ public class MemberService {
 
         memberRepository.removeAllFriendships(member);
         chatRoomRepository.leaveAllChatRooms(member);
+        chatDao.removeAllChats(member);
 
         Member deletedMember = memberRepository.delete(member);
 

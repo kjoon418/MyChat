@@ -26,6 +26,7 @@ public class Chat implements Comparable<Chat> {
 
     @JoinColumn
     @ManyToOne(fetch = LAZY)
+    @Setter
     private Member member;
 
     @JoinColumn(nullable = false)

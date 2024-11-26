@@ -1,5 +1,6 @@
 package junwatson.mychat.service;
 
+import junwatson.mychat.domain.Chat;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
@@ -11,6 +12,7 @@ import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.repository.ChatRoomRepository;
 import junwatson.mychat.repository.MemberRepository;
+import junwatson.mychat.repository.dao.ChatDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
+    private final ChatDao chatDao;
 
     public ChatRoomInfoResponseDto createChatRoom(Member requsetMember, ChatRoomCreateRequestDto requestDto) {
         log.info("ChatRoomService.createChatRoom() called");
@@ -40,9 +43,14 @@ public class ChatRoomService {
             members.add(memberRepository.findByEmail(friend.getEmail())
                     .orElseThrow(() -> new MemberNotExistsException("해당 이메일을 지닌 회원이 존재하지 않습니다: " + friend.getEmail())));
         }
+
+        StringBuilder systemChatBuilder = new StringBuilder("새로운 채팅방이 생성되었습니다. 구성원: " + requsetMember.getName() + ", ");
         for (Member member : members) {
             chatRoomRepository.createMemberChatRoom(member, chatRoom);
+            systemChatBuilder.append(member.getName()).append(", ");
         }
+        systemChatBuilder.delete(systemChatBuilder.length() - 2, systemChatBuilder.length());
+        chatDao.createSystemChat(chatRoom, systemChatBuilder.toString());
 
         return ChatRoomInfoResponseDto.from(memberChatRoom);
     }
@@ -121,6 +129,7 @@ public class ChatRoomService {
                 .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
 
         MemberChatRoom memberChatRoom = chatRoomRepository.leaveChatRoom(member, chatRoom);
+        chatDao.createSystemChat(chatRoom, member.getName()+"님이 채팅방에서 나갔습니다.");
 
         return ChatRoomInfoResponseDto.from(memberChatRoom);
     }
@@ -128,6 +137,10 @@ public class ChatRoomService {
     public ChatRoomInfoResponseDto inviteChatRoom(Member requestMember, ChatRoomInviteRequestDto requestDto) {
         log.info("ChatRoomService.inviteChatRoom() called");
 
+        // 유효성 검사
+        if (requestDto.getFriends().isEmpty()) {
+            throw new IllegalArgumentException("초대하고자 하는 회원이 없습니다.");
+        }
         ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getId())
                 .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
         MemberChatRoom findMemberChatRoom = requestMember.getMemberChatRooms().stream()
@@ -135,14 +148,20 @@ public class ChatRoomService {
                 .findAny()
                 .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방에 소속되어 있지 않습니다."));
 
+        // 초대 및 시스템 채팅 작성
         List<Member> members = new ArrayList<>();
         for (ChatRoomInviteRequestDto.Friend friend : requestDto.getFriends()) {
             members.add(memberRepository.findByEmail(friend.getEmail())
                     .orElseThrow(() -> new MemberNotExistsException("초대하고자 하는 회원이 존재하지 않습니다.")));
         }
+        StringBuilder systemChatBuilder = new StringBuilder();
         for (Member member : members) {
             chatRoomRepository.createMemberChatRoom(member, chatRoom);
+            systemChatBuilder.append(member.getName()).append(", ");
         }
+        systemChatBuilder.delete(systemChatBuilder.length() - 2, systemChatBuilder.length());
+        systemChatBuilder.append("님이 채팅방에 초대되었습니다.");
+        chatDao.createSystemChat(chatRoom, systemChatBuilder.toString());
 
         return ChatRoomInfoResponseDto.from(findMemberChatRoom);
     }

@@ -3,11 +3,13 @@ package junwatson.mychat.repository.dao;
 import junwatson.mychat.domain.Chat;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.domain.type.ChatType;
 import junwatson.mychat.repository.condition.ChatSearchCondition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -51,5 +53,30 @@ public class ChatDao {
 
         return stream.sorted()
                 .toList();
+    }
+
+    /**
+     * 해당 문자열을 담은 시스템 채팅을 생성하는 메서드
+     */
+    public Chat createSystemChat(ChatRoom chatRoom, String message) {
+        Chat systemChat = Chat.builder()
+                .chatRoom(chatRoom)
+                .content(message)
+                .inputDate(LocalDateTime.now())
+                .chatType(ChatType.SYSTEM)
+                .build();
+        chatRoom.getChats().add(systemChat);
+
+        return systemChat;
+    }
+
+    /**
+     * 해당 멤버의 모든 채팅을 (알수없음)으로 변경하는 메서드
+     */
+    public void removeAllChats(Member member) {
+        List<Chat> chats = member.getChats();
+        for (Chat chat : chats) {
+            chat.setMember(null);
+        }
     }
 }

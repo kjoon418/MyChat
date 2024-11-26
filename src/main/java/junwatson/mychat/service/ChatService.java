@@ -4,6 +4,7 @@ import junwatson.mychat.domain.Chat;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
+import junwatson.mychat.domain.type.ChatType;
 import junwatson.mychat.dto.request.ChatCreateRequestDto;
 import junwatson.mychat.dto.request.ChatInfoRequestDto;
 import junwatson.mychat.dto.request.ChatSearchRequestDto;

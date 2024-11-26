@@ -15,7 +15,8 @@ import static lombok.AccessLevel.*;
 @AllArgsConstructor(access = PRIVATE)
 public class ChatInfoResponseDto {
 
-    private Long id;
+    private Long chatId;
+    private Long memberId;
     private String content;
     private LocalDateTime inputDate;
     private int unconfirmedCounter;
@@ -23,7 +24,8 @@ public class ChatInfoResponseDto {
 
     public static ChatInfoResponseDto of(Chat chat, int unconfirmedCounter) {
         return ChatInfoResponseDto.builder()
-                .id(chat.getId())
+                .chatId(chat.getId())
+                .memberId(chat.getMember().getId())
                 .content(chat.getContent())
                 .inputDate(chat.getInputDate())
                 .chatType(chat.getChatType())
