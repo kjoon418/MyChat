@@ -24,6 +24,16 @@ public class ChatDao {
                 .findAny();
     }
 
+    public void remove(Chat chat) {
+        log.info("ChatDao.remove() called");
+
+        Member member = chat.getMember();
+        ChatRoom chatRoom = chat.getChatRoom();
+
+        member.getChats().remove(chat);
+        chatRoom.getChats().remove(chat);
+    }
+
     public List<Chat> findAllChats(Member member) {
         log.info("ChatDao.findAllChats() called");
 

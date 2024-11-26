@@ -3,6 +3,7 @@ package junwatson.mychat.controller;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.ChatCreateRequestDto;
+import junwatson.mychat.dto.request.ChatInfoRequestDto;
 import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
 import junwatson.mychat.dto.request.ChatSearchRequestDto;
 import junwatson.mychat.dto.response.ChatInfoResponseDto;
@@ -13,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -56,13 +54,23 @@ public class ChatController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @DeleteMapping
+    public ResponseEntity<ChatInfoResponseDto> deleteChat(@RequestBody ChatInfoRequestDto requestDto, Principal principal) {
+        log.info("ChatController.deleteChat() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        ChatInfoResponseDto responseDto = chatService.deleteChat(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<ChatInfoResponseDto>> searchChats(@RequestBody ChatSearchRequestDto requestDto, Principal principal) {
         log.info("ChatController.searchChats() called");
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        ChatRoom chatRoom = chatRoomService.findChatRoomById(requestDto.getId());
         List<ChatInfoResponseDto> responseDto = chatService.searchChats(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
