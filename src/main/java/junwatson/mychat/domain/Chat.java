@@ -1,42 +1,31 @@
 package junwatson.mychat.domain;
 
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
-
-@Entity
-@NoArgsConstructor(access = PROTECTED)
+@MappedSuperclass
 @Getter
-public class Chat {
+public abstract class Chat implements Comparable<Chat> {
 
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    @Column(nullable = false)
+    protected LocalDateTime inputDate;
+    @Column(nullable = false)
+    protected String content;
 
-    @JoinColumn(nullable = false)
-    @ManyToOne(fetch = LAZY)
-    private Member member;
+    /**
+     * 입력 날짜에 대해 내림차순으로 정렬하게 함
+     */
+    @Override
+    public int compareTo(Chat o) {
+        if (this.inputDate.isAfter(o.inputDate)) {
+            return -1;
+        } else if (this.inputDate.isEqual(o.inputDate)) {
+            return 0;
+        }
 
-    @JoinColumn(nullable = false)
-    @ManyToOne(fetch = LAZY)
-    private ChatRoom chatRoom;
-
-    private String content;
-    private LocalDateTime input_date;
-
-    @Builder
-    private Chat(Member member, ChatRoom chatRoom, String content, LocalDateTime input_date) {
-        this.member = member;
-        this.chatRoom = chatRoom;
-        this.content = content;
-        this.input_date = input_date;
+        return 1;
     }
 }

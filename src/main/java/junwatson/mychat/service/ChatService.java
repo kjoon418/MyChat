@@ -1,6 +1,6 @@
 package junwatson.mychat.service;
 
-import junwatson.mychat.domain.Chat;
+import junwatson.mychat.domain.UserChat;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
@@ -36,11 +36,11 @@ public class ChatService {
                 .orElseThrow(() -> new IllegalMemberStateException("해당 채팅방에 소속되어 있지 않습니다."));
         memberChatRoom1.setViewDate(LocalDateTime.now());
 
-        Chat chat = requestDto.toEntityWithMemberChatRoom(member, chatRoom);
-        member.getChats().add(chat);
-        chatRoom.getChats().add(chat);
+        UserChat userChat = requestDto.toEntityWithMemberChatRoom(member, chatRoom);
+        member.getUserChats().add(userChat);
+        chatRoom.getUserChats().add(userChat);
 
-        return ChatInfoResponseDto.of(chat, calculateUnconfirmedCounter(chat, chatRoom));
+        return ChatInfoResponseDto.of(userChat, calculateUnconfirmedCounter(userChat, chatRoom));
     }
 
     public List<ChatInfoResponseDto> readChats(Member member, ChatRoom chatRoom) {
@@ -50,7 +50,8 @@ public class ChatService {
                 .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
         memberChatRoom.setViewDate(LocalDateTime.now());
 
-        return chatRoom.getChats().stream()
+        return chatRoom.getUserChats().stream()
+                .sorted()
                 .map(chat -> {
                     int unconfirmedCounter = calculateUnconfirmedCounter(chat, chatRoom);
                     return ChatInfoResponseDto.of(chat, unconfirmedCounter);
@@ -61,7 +62,7 @@ public class ChatService {
     /**
      * 채팅방의 회원 중 몇 명이나 해당 채팅을 읽지 않았는지를 반환하는 메서드
      */
-    private int calculateUnconfirmedCounter(Chat chat, ChatRoom chatRoom) {
+    private int calculateUnconfirmedCounter(UserChat userChat, ChatRoom chatRoom) {
         log.info("ChatService.calculateUnconfirmedCounter() called");
 
         int count = 0;
@@ -69,7 +70,7 @@ public class ChatService {
                 .map(MemberChatRoom::getViewDate)
                 .toList();
         for (LocalDateTime viewDate : viewDates) {
-            if (chat.getInput_date().isAfter(viewDate)) {
+            if (userChat.getInputDate().isAfter(viewDate)) {
                 count++;
             }
         }

@@ -1,6 +1,6 @@
 package junwatson.mychat.dto.response;
 
-import junwatson.mychat.domain.Chat;
+import junwatson.mychat.domain.UserChat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,14 +16,14 @@ public class ChatInfoResponseDto {
 
     private Long id;
     private String content;
-    private LocalDateTime input_date;
+    private LocalDateTime inputDate;
     private int unconfirmedCounter;
 
-    public static ChatInfoResponseDto of(Chat chat, int unconfirmedCounter) {
+    public static ChatInfoResponseDto of(UserChat userChat, int unconfirmedCounter) {
         return ChatInfoResponseDto.builder()
-                .id(chat.getId())
-                .content(chat.getContent())
-                .input_date(chat.getInput_date())
+                .id(userChat.getId())
+                .content(userChat.getContent())
+                .inputDate(userChat.getInputDate())
                 .unconfirmedCounter(unconfirmedCounter)
                 .build();
     }
