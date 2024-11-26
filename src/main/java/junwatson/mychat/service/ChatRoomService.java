@@ -7,7 +7,6 @@ import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.exception.ChatRoomNotExistsException;
-import junwatson.mychat.exception.IllegalChatRoomStateException;
 import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.repository.ChatRoomRepository;
@@ -20,7 +19,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +45,11 @@ public class ChatRoomService {
         }
 
         return ChatRoomInfoResponseDto.from(memberChatRoom);
+    }
+
+    public ChatRoom findChatRoomById(Long id) {
+        return chatRoomRepository.findById(id)
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
     }
 
     public ChatRoom findChatRoomByDto(ChatRoomInfoRequestDto requestDto) {

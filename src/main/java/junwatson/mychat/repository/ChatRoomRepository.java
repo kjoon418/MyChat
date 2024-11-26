@@ -59,6 +59,12 @@ public class ChatRoomRepository {
         return memberChatRoomDao.createMemberChatRoom(member, chatRoom);
     }
 
+    public Optional<MemberChatRoom> findMemberChatRoom(Member member, ChatRoom chatRoom) {
+        log.info("ChatRoomRepository.findMemberChatRoom() called");
+
+        return memberChatRoomDao.findByMemberAndChatRoom(member, chatRoom);
+    }
+
     public MemberChatRoom leaveChatRoom(Member member, ChatRoom chatRoom) {
         MemberChatRoom memberChatRoom = memberChatRoomDao.findByMemberAndChatRoom(member, chatRoom)
                 .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방에 소속되지 않았습니다."));
