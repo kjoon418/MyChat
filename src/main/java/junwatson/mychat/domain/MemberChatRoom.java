@@ -33,8 +33,8 @@ public class MemberChatRoom {
     @OneToMany(fetch = LAZY, orphanRemoval = true, cascade = ALL)
     private final List<Chat> chats = new ArrayList<>();
 
+    @Setter
     private LocalDateTime viewDate;
-
     @Setter
     private String aliasName;
     @Setter
