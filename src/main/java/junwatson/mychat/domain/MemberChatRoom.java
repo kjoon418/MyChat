@@ -33,7 +33,7 @@ public class MemberChatRoom {
     @OneToMany(fetch = LAZY, orphanRemoval = true, cascade = ALL)
     private final List<Chat> chats = new ArrayList<>();
 
-    private LocalDateTime view_date;
+    private LocalDateTime viewDate;
 
     @Setter
     private String aliasName;
@@ -44,6 +44,6 @@ public class MemberChatRoom {
     private MemberChatRoom(Member member, ChatRoom chatRoom) {
         this.member = member;
         this.chatRoom = chatRoom;
-        this.view_date = LocalDateTime.now();
+        this.viewDate = LocalDateTime.now();
     }
 }
