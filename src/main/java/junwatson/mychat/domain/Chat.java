@@ -22,15 +22,20 @@ public class Chat {
     private Long id;
 
     @JoinColumn(nullable = false)
-    @ManyToOne
-    private MemberChatRoom memberChatRoom;
+    @ManyToOne(fetch = LAZY)
+    private Member member;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = LAZY)
+    private ChatRoom chatRoom;
 
     private String content;
     private LocalDateTime input_date;
 
     @Builder
-    private Chat(MemberChatRoom memberChatRoom, String content, LocalDateTime input_date) {
-        this.memberChatRoom = memberChatRoom;
+    private Chat(Member member, ChatRoom chatRoom, String content, LocalDateTime input_date) {
+        this.member = member;
+        this.chatRoom = chatRoom;
         this.content = content;
         this.input_date = input_date;
     }

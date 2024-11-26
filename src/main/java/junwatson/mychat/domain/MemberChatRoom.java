@@ -30,9 +30,6 @@ public class MemberChatRoom {
     @JoinColumn(nullable = false)
     private ChatRoom chatRoom;
 
-    @OneToMany(fetch = LAZY, orphanRemoval = true, cascade = ALL)
-    private final List<Chat> chats = new ArrayList<>();
-
     @Setter
     private LocalDateTime viewDate;
     @Setter

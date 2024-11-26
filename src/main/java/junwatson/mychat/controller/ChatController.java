@@ -3,6 +3,7 @@ package junwatson.mychat.controller;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.ChatCreateRequestDto;
+import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
 import junwatson.mychat.dto.response.ChatInfoResponseDto;
 import junwatson.mychat.service.ChatRoomService;
 import junwatson.mychat.service.ChatService;
@@ -12,11 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -39,5 +42,17 @@ public class ChatController {
         ChatInfoResponseDto responseDto = chatService.createChat(member, requestDto);
 
         return ResponseEntity.status(CREATED).body(responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ChatInfoResponseDto>> findChats(@RequestBody ChatRoomInfoRequestDto requestDto, Principal principal) {
+        log.info("ChatController.findChats() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        ChatRoom chatRoom = chatRoomService.findChatRoomByDto(requestDto);
+        List<ChatInfoResponseDto> responseDto = chatService.readChats(member, chatRoom);
+
+        return ResponseEntity.ok(responseDto);
     }
 }
