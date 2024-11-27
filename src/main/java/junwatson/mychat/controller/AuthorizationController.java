@@ -59,8 +59,8 @@ public class AuthorizationController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handle(RuntimeException exception) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handle(Exception exception) {
         return MyChatExceptionHandler.handle(exception);
     }
 }
