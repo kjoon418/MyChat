@@ -61,13 +61,20 @@ public class MemberService {
     public TokenDto signIn(MemberSignInRequestDto requestDto) {
         log.info("MemberService.signIn() called");
 
+        String email = requestDto.getEmail();
+        String password = requestDto.getPassword();
+
+        // 유효성 검사
+        if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
+            throw new IllegalArgumentException("부적절한 이메일 혹은 비밀번호입니다.");
+        }
         Member member = memberRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new MemberNotExistsException("이메일과 비밀번호를 다시 확인해주세요"));
-
         if (!member.getPassword().equals(requestDto.getPassword())) {
             throw new MemberNotExistsException("이메일과 비밀번호를 다시 확인해주세요");
         }
 
+        // 토큰 발급
         String accessToken = tokenProvider.createAccessToken(member);
         String refreshToken = memberRepository.createRefreshToken(member);
 
@@ -81,6 +88,14 @@ public class MemberService {
         log.info("MemberService.logout() called");
 
         memberRepository.removeRefreshToken(member);
+    }
+
+    public MemberInfoResponseDto integrate(Member member, MemberIntegrationRequestDto requestDto) {
+        log.info("MemberService.integrate() called");
+
+        memberRepository.updatePassword(member, requestDto.getPassword());
+
+        return MemberInfoResponseDto.from(member);
     }
 
     public MemberInfoResponseDto withdrawMembership(Member member) {

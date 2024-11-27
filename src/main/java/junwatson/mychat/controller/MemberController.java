@@ -3,6 +3,7 @@ package junwatson.mychat.controller;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
+import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,17 @@ public class MemberController {
         memberService.logout(member);
 
         return ResponseEntity.ok("로그아웃이 완료되었습니다.");
+    }
+
+    @GetMapping("/integration")
+    public ResponseEntity<MemberInfoResponseDto> integrate(@RequestBody MemberIntegrationRequestDto requestDto, Principal principal) {
+        log.info("MemberController.integrate() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        MemberInfoResponseDto responseDto = memberService.integrate(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/friend")
