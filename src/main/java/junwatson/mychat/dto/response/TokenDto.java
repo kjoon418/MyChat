@@ -15,4 +15,5 @@ public class TokenDto {
 
     @SerializedName("refresh_token")
     private String refreshToken;
+
 }

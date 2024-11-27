@@ -36,12 +36,6 @@ public class ChatDao {
         chatRoom.getChats().remove(chat);
     }
 
-    public List<Chat> findAllChats(Member member) {
-        log.info("ChatDao.findAllChats() called");
-
-        return member.getChats();
-    }
-
     public List<Chat> searchByCondition(ChatRoom chatRoom, ChatSearchCondition condition) {
         log.info("ChatDao.searchByCondition() called");
 
@@ -58,22 +52,25 @@ public class ChatDao {
     /**
      * 해당 문자열을 담은 시스템 채팅을 생성하는 메서드
      */
-    public Chat createSystemChat(ChatRoom chatRoom, String message) {
+    public void createSystemChat(ChatRoom chatRoom, String message) {
+        log.info("ChatDao.createSystemChat() called");
+
         Chat systemChat = Chat.builder()
                 .chatRoom(chatRoom)
                 .content(message)
                 .inputDate(LocalDateTime.now())
                 .chatType(ChatType.SYSTEM)
                 .build();
-        chatRoom.getChats().add(systemChat);
 
-        return systemChat;
+        chatRoom.getChats().add(systemChat);
     }
 
     /**
      * 해당 멤버의 모든 채팅을 (알수없음)으로 변경하는 메서드
      */
     public void removeAllChats(Member member) {
+        log.info("ChatDao.removeAllChats() called");
+
         List<Chat> chats = member.getChats();
         for (Chat chat : chats) {
             chat.setMember(null);

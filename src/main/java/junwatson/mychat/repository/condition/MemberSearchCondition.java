@@ -1,11 +1,10 @@
 package junwatson.mychat.repository.condition;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import static lombok.AccessLevel.*;
+import static lombok.AccessLevel.PRIVATE;
 
 @Builder
 @AllArgsConstructor(access = PRIVATE)

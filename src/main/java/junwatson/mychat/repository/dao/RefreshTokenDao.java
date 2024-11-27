@@ -2,18 +2,12 @@ package junwatson.mychat.repository.dao;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.RefreshToken;
-import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.jwt.TokenType;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import java.security.Key;
 import java.util.Date;
 
 import static junwatson.mychat.jwt.TokenConstant.*;

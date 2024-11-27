@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -82,4 +83,14 @@ public class FriendshipDao {
 
         return memberToFriend && friendToMember;
     }
+
+    public void removeAllFriendships(Member member) {
+        log.info("FriendshipDao.removeAllFriendships() called");
+
+        List<Friendship> removeFriendships = new ArrayList<>(member.getFriendships());
+        for (Friendship friendship : removeFriendships) {
+            removeFriendship(member, friendship.getFriendMember());
+        }
+    }
+
 }

@@ -5,8 +5,6 @@ import junwatson.mychat.domain.Member;
 import junwatson.mychat.exception.MemberNotExistsException;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public class BlacklistDao {
 
@@ -39,9 +37,5 @@ public class BlacklistDao {
         member.getBlacklists().remove(findBlacklist);
 
         return findBlacklist;
-    }
-
-    public List<Blacklist> findBlacklists(Member member) {
-        return member.getBlacklists();
     }
 }

@@ -1,21 +1,22 @@
 package junwatson.mychat.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = PROTECTED)
 @Table(uniqueConstraints = {@UniqueConstraint(name = "member_chat_room_unique", columnNames = {"member_id", "chat_room_id"})})
-@Getter
 public class MemberChatRoom {
 
     @Id
@@ -30,7 +31,6 @@ public class MemberChatRoom {
     @JoinColumn(nullable = false)
     private ChatRoom chatRoom;
 
-    @Setter
     private LocalDateTime viewDate;
     @Setter
     private String aliasName;
@@ -42,5 +42,25 @@ public class MemberChatRoom {
         this.member = member;
         this.chatRoom = chatRoom;
         this.viewDate = LocalDateTime.now();
+    }
+
+    /**
+     * 채팅방 조회 시각을 현재로 설정하는 메서드
+     */
+    public void setViewDateToNow() {
+        this.viewDate = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MemberChatRoom that = (MemberChatRoom) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

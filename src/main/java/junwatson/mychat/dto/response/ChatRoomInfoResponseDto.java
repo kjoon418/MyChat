@@ -1,13 +1,11 @@
 package junwatson.mychat.dto.response;
 
-import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.MemberChatRoom;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import static lombok.AccessLevel.*;
+import static lombok.AccessLevel.PRIVATE;
 
 @Getter
 @Builder

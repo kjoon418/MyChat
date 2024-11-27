@@ -1,13 +1,11 @@
 package junwatson.mychat.controller;
 
-import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.ChatCreateRequestDto;
 import junwatson.mychat.dto.request.ChatInfoRequestDto;
 import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
 import junwatson.mychat.dto.request.ChatSearchRequestDto;
 import junwatson.mychat.dto.response.ChatInfoResponseDto;
-import junwatson.mychat.service.ChatRoomService;
 import junwatson.mychat.service.ChatService;
 import junwatson.mychat.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +26,6 @@ import static org.springframework.http.HttpStatus.*;
 public class ChatController {
 
     private final MemberService memberService;
-    private final ChatRoomService chatRoomService;
     private final ChatService chatService;
 
     @PostMapping
@@ -48,8 +45,7 @@ public class ChatController {
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        ChatRoom chatRoom = chatRoomService.findChatRoomByDto(requestDto);
-        List<ChatInfoResponseDto> responseDto = chatService.readChats(member, chatRoom);
+        List<ChatInfoResponseDto> responseDto = chatService.readChats(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }

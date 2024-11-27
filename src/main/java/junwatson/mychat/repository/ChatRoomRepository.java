@@ -6,7 +6,6 @@ import jakarta.persistence.EntityManager;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
-import junwatson.mychat.exception.ChatRoomNotExistsException;
 import junwatson.mychat.repository.dao.MemberChatRoomDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static junwatson.mychat.domain.QChatRoom.*;
+import static junwatson.mychat.domain.QChatRoom.chatRoom;
 
 @Repository
 @Slf4j
@@ -32,67 +31,59 @@ public class ChatRoomRepository {
     }
 
     public ChatRoom save(ChatRoom chatRoom) {
+        log.info("ChatRoomRepository.save() called");
+
         em.persist(chatRoom);
 
         return chatRoom;
     }
 
-    public ChatRoom remove(ChatRoom chatRoom) {
-        em.remove(chatRoom);
-
-        return chatRoom;
-    }
-
     public Optional<ChatRoom> findById(Long id) {
+        log.info("ChatRoomRepository.findById() called");
+
         return Optional.ofNullable(em.find(ChatRoom.class, id));
     }
 
     public List<ChatRoom> findByName(String name) {
+        log.info("ChatRoomRepository.findByName() called");
+
         return query.select(chatRoom)
                 .from(chatRoom)
                 .where(nameLike(name))
                 .fetch();
     }
 
-    public MemberChatRoom createMemberChatRoom(Member member, ChatRoom chatRoom) {
-        return memberChatRoomDao.createMemberChatRoom(member, chatRoom);
-    }
+    public void leaveChatRoom(MemberChatRoom memberChatRoom) {
+        log.info("ChatRoomRepository.leaveChatRoom() called");
 
-    public Optional<MemberChatRoom> findMemberChatRoom(Member member, ChatRoom chatRoom) {
-        log.info("ChatRoomRepository.findMemberChatRoom() called");
+        // MemberChatRoom의 부모 엔티티로부터 삭제
+        memberChatRoomDao.removeMemberChatRoom(memberChatRoom);
 
-        return memberChatRoomDao.findByMemberAndChatRoom(member, chatRoom);
-    }
-
-    public MemberChatRoom leaveChatRoom(Member member, ChatRoom chatRoom) {
-        MemberChatRoom memberChatRoom = memberChatRoomDao.findByMemberAndChatRoom(member, chatRoom)
-                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방에 소속되지 않았습니다."));
-
-        member.getMemberChatRooms()
-                .remove(memberChatRoom);
-        chatRoom.getMemberChatRooms()
-                .remove(memberChatRoom);
-
-        if (isEmptyChatRoom(chatRoom)) {
-            em.remove(chatRoom);
-        }
-
-        return memberChatRoom;
+        // 채팅방이 비어 있을 경우, 해당 채팅방에 대한 데이터를 삭제
+        removeChatRoomIfEmpty(memberChatRoom.getChatRoom());
     }
 
     public void leaveAllChatRooms(Member member) {
+        log.info("ChatRoomRepository.leaveAllChatRooms() called");
+
         List<MemberChatRoom> removeChatRooms = new ArrayList<>(member.getMemberChatRooms());
 
         for (MemberChatRoom memberChatRoom : removeChatRooms) {
-            leaveChatRoom(member, memberChatRoom.getChatRoom());
+            leaveChatRoom(memberChatRoom);
         }
     }
 
-    private boolean isEmptyChatRoom(ChatRoom chatRoom) {
-        return chatRoom.getMemberChatRooms().isEmpty();
+    private void removeChatRoomIfEmpty(ChatRoom chatRoom) {
+        log.info("ChatRoomRepository.removeChatRoomIfEmpty() called");
+
+        if (chatRoom.getMemberChatRooms().isEmpty()) {
+            em.remove(chatRoom);
+        }
     }
 
     private BooleanExpression nameLike(String name) {
+        log.info("ChatRoomRepository.nameLike() called");
+
         return chatRoom.name.like("%" + name + "%");
     }
 }

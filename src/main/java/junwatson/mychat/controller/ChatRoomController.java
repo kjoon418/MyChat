@@ -77,7 +77,7 @@ public class ChatRoomController {
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        ChatRoom chatRoom = chatRoomService.findChatRoomByDto(requestDto);
+        ChatRoom chatRoom = chatRoomService.findChatRoomById(requestDto.getId());
         List<MemberInfoResponseDto> responseDto = chatRoomService.findMembersInChatRoom(member, chatRoom);
 
         return ResponseEntity.ok(responseDto);

@@ -1,13 +1,12 @@
 package junwatson.mychat.dto.request;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static lombok.AccessLevel.*;
+import static lombok.AccessLevel.PRIVATE;
 
-@NoArgsConstructor(access = PRIVATE)
 @Getter
+@NoArgsConstructor(access = PRIVATE)
 public class MemberIntegrationRequestDto {
 
     private String password;

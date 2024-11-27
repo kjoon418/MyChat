@@ -5,59 +5,46 @@ import junwatson.mychat.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
 @Slf4j
 public class FriendshipRequestDao {
 
-    public List<FriendshipRequest> findSentFriendshipRequests(Member member) {
-        log.info("FriendshipRequestDao.findSentFriendshipRequest() called");
-
-        return member.getSentFriendshipRequests();
-    }
-
-    public List<FriendshipRequest> findReceivedFriendshipRequests(Member member) {
-        log.info("FriendshipRequestDao.findReceivedFriendshipRequest() called");
-
-        return member.getReceivedFriendshipRequests();
-    }
-
-    public boolean isReceivedFriendshipRequestExists(Member member, Member friend) {
+    public boolean isReceivedFriendshipRequestExists(Member fromMember, Member toMember) {
         log.info("FriendshipRequestDao.isReceivedFriendshipRequestExists() called");
 
-        return member.getReceivedFriendshipRequests()
+        return fromMember.getReceivedFriendshipRequests()
                 .stream()
-                .anyMatch((request) -> request.getRequestMember().equals(friend));
+                .anyMatch((request) -> request.getRequestMember().equals(toMember));
     }
 
-    public boolean isSentFriendshipRequestExists(Member member, Member friend) {
+    public boolean isSentFriendshipRequestExists(Member fromMember, Member toMember) {
         log.info("FriendshipRequestDao.isSentFriendshipRequestExists() called");
 
-        return member.getSentFriendshipRequests()
+        return fromMember.getSentFriendshipRequests()
                 .stream()
-                .anyMatch((request) -> request.getResponseMember().equals(friend));
+                .anyMatch((request) -> request.getResponseMember().equals(toMember));
     }
 
-    public void createFriendshipRequest(Member member, Member friend) {
+    public void createFriendshipRequest(Member fromMember, Member toMember) {
         log.info("FriendshipRequestDao.createFriendshipRequest() called");
 
         FriendshipRequest friendshipRequest = FriendshipRequest.builder()
-                .requestMember(member)
-                .responseMember(friend)
+                .requestMember(fromMember)
+                .responseMember(toMember)
                 .build();
 
-        member.getSentFriendshipRequests().add(friendshipRequest);
+        fromMember.getSentFriendshipRequests().add(friendshipRequest);
     }
 
-    public void removeFriendshipRequest(Member member, Member friend) {
+    public void removeFriendshipRequest(Member fromMember, Member toMember) {
         log.info("FriendshipRequestDao.removeRequest() called");
 
-        member.getSentFriendshipRequests().stream()
-                .filter((request) -> request.getResponseMember().equals(friend))
+        fromMember.getSentFriendshipRequests().stream()
+                .filter((request) -> request.getResponseMember().equals(toMember))
                 .findAny()
-                .ifPresent(friendshipRequest -> member.getSentFriendshipRequests()
-                .remove(friendshipRequest));
+                .ifPresent(friendshipRequest -> {
+                    fromMember.getSentFriendshipRequests()
+                            .remove(friendshipRequest);
+                });
     }
 }
