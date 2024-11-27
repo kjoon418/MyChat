@@ -3,7 +3,6 @@ package junwatson.mychat.controller;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
-import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -174,5 +173,10 @@ public class MemberController {
         MemberInfoResponseDto responseDto = memberService.removeBlacklist(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handle(RuntimeException exception) {
+        return MyChatExceptionHandler.handle(exception);
     }
 }

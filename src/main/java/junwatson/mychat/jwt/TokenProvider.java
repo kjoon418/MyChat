@@ -86,7 +86,7 @@ public class TokenProvider {
                     .build()
                     .parseClaimsJws(token);
             return true;
-        } catch (UnsupportedJwtException | ExpiredJwtException | IllegalArgumentException e) {
+        } catch (UnsupportedJwtException | ExpiredJwtException | IllegalArgumentException | MalformedJwtException e) {
             return false;
         }
     }

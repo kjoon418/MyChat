@@ -75,4 +75,9 @@ public class ChatController {
 
         return ResponseEntity.ok(responseDto);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handle(RuntimeException exception) {
+        return MyChatExceptionHandler.handle(exception);
+    }
 }
