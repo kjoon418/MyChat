@@ -49,6 +49,17 @@ public class ChatRoomController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ChatRoomInfoResponseDto>> searchChatRoom(@RequestBody ChatRoomSearchRequestDto requestDto, Principal principal) {
+        log.info("ChatRoomController.searchChatRoom() called");
+
+        long memberId = Long.parseLong(principal.getName());
+        Member member = memberService.findById(memberId);
+        List<ChatRoomInfoResponseDto> responseDto = chatRoomService.searchChatRooms(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
     @DeleteMapping
     public ResponseEntity<ChatRoomInfoResponseDto> leaveChatRoom(@RequestBody ChatRoomInfoRequestDto requestDto, Principal principal) {
         log.info("ChatRoomController.leaveChatRoom() called");

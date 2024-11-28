@@ -3,10 +3,7 @@ package junwatson.mychat.service;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
-import junwatson.mychat.dto.request.ChatRoomCreateRequestDto;
-import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
-import junwatson.mychat.dto.request.ChatRoomInviteRequestDto;
-import junwatson.mychat.dto.request.ChatRoomModificationRequestDto;
+import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.exception.ChatRoomNotExistsException;
@@ -14,6 +11,7 @@ import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.exception.MemberNotExistsException;
 import junwatson.mychat.repository.ChatRoomRepository;
 import junwatson.mychat.repository.MemberRepository;
+import junwatson.mychat.repository.condition.MemberChatRoomSearchCondition;
 import junwatson.mychat.repository.dao.ChatDao;
 import junwatson.mychat.repository.dao.MemberChatRoomDao;
 import lombok.RequiredArgsConstructor;
@@ -81,6 +79,18 @@ public class ChatRoomService {
         }
 
         return responseDto;
+    }
+
+    public List<ChatRoomInfoResponseDto> searchChatRooms(Member member, ChatRoomSearchRequestDto requestDto) {
+        log.info("ChatRoomService.searchChatRooms() called");
+
+        // 채팅방 이름을 통해 검색
+        MemberChatRoomSearchCondition condition = requestDto.toCondition();
+        List<MemberChatRoom> memberChatRooms = memberChatRoomDao.filterWithCondition(member.getMemberChatRooms(), condition);
+
+        return memberChatRooms.stream()
+                .map(ChatRoomInfoResponseDto::from)
+                .toList();
     }
 
     public List<MemberInfoResponseDto> findMembersInChatRoom(Member requestMember, ChatRoom chatRoom) {

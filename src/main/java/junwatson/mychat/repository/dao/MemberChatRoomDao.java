@@ -3,9 +3,12 @@ package junwatson.mychat.repository.dao;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
+import junwatson.mychat.repository.condition.MemberChatRoomSearchCondition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -44,5 +47,20 @@ public class MemberChatRoomDao {
                 .remove(memberChatRoom);
         chatRoom.getMemberChatRooms()
                 .remove(memberChatRoom);
+    }
+
+    public List<MemberChatRoom> filterWithCondition(List<MemberChatRoom> memberChatRooms, MemberChatRoomSearchCondition condition) {
+        log.info("MemberChatRoomDao.filterWithCondition() called");
+
+        return memberChatRooms.stream()
+                .filter(memberChatRoom -> {
+                    if (StringUtils.hasText(memberChatRoom.getAliasName())) {
+                        return memberChatRoom.getAliasName().contains(condition.getName());
+                    }
+                    return memberChatRoom.getChatRoom()
+                            .getName()
+                            .contains(condition.getName());
+                })
+                .toList();
     }
 }

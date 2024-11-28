@@ -6,9 +6,11 @@ import jakarta.persistence.EntityManager;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
+import junwatson.mychat.repository.condition.MemberChatRoomSearchCondition;
 import junwatson.mychat.repository.dao.MemberChatRoomDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,15 +46,6 @@ public class ChatRoomRepository {
         return Optional.ofNullable(em.find(ChatRoom.class, id));
     }
 
-    public List<ChatRoom> findByName(String name) {
-        log.info("ChatRoomRepository.findByName() called");
-
-        return query.select(chatRoom)
-                .from(chatRoom)
-                .where(nameLike(name))
-                .fetch();
-    }
-
     public void leaveChatRoom(MemberChatRoom memberChatRoom) {
         log.info("ChatRoomRepository.leaveChatRoom() called");
 
@@ -83,6 +76,10 @@ public class ChatRoomRepository {
 
     private BooleanExpression nameLike(String name) {
         log.info("ChatRoomRepository.nameLike() called");
+
+        if (!StringUtils.hasText(name)) {
+            return null;
+        }
 
         return chatRoom.name.like("%" + name + "%");
     }
