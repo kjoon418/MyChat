@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor(access = PROTECTED)
 public class ChatCreateRequestDto {
 
     private Long chatRoomId;

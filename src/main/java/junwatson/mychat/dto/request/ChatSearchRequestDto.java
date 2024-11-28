@@ -4,10 +4,10 @@ import junwatson.mychat.repository.condition.ChatSearchCondition;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor(access = PROTECTED)
 public class ChatSearchRequestDto {
 
     private Long id;

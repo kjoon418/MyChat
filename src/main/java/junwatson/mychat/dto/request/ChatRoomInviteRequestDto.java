@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@NoArgsConstructor(access = PRIVATE)
+@NoArgsConstructor(access = PROTECTED)
 public class ChatRoomInviteRequestDto {
 
     private Long id;
