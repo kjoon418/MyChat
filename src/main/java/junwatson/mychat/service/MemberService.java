@@ -198,6 +198,9 @@ public class MemberService {
         if (blacklistDao.isBlocked(member, friend)) {
             throw new BlockException("나를 차단한 회원에게는 친구 요청을 보낼 수 없습니다.");
         }
+        if (friend == member) {
+            throw new IllegalArgumentException("본인에게는 친구 요청을 보낼 수 없습니다.");
+        }
 
         // 차단한 상대를 친구 추가하려 할 경우, 차단을 해제한다
         if (blacklistDao.isBlacklistExists(member, friend)) {
@@ -316,6 +319,9 @@ public class MemberService {
         // 유효성 감사
         Member target = memberRepository.findByEmail(targetEmail)
                 .orElseThrow(() -> new MemberNotExistsException("대상 회원이 존재하지 않습니다."));
+        if (member == target) {
+            throw new IllegalArgumentException("본인은 차단할 수 없습니다.");
+        }
 
         // 차단 데이터 생성
         Blacklist blacklist = blacklistDao.createBlacklist(member, target);
