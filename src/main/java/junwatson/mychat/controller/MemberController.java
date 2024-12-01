@@ -100,7 +100,7 @@ public class MemberController {
     }
 
     @GetMapping("/friend/search")
-    public ResponseEntity<List<MemberInfoResponseDto>> searchFriends(@RequestBody SearchMemberRequestDto requestDto, Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> searchFriends(@RequestBody MemberSearchRequestDto requestDto, Principal principal) {
         log.info("MemberController.searchFriends() called");
 
         long memberId = Long.parseLong(principal.getName());
@@ -143,7 +143,7 @@ public class MemberController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MemberInfoResponseDto>> searchMembers(@RequestBody SearchMemberRequestDto requestDto, Principal principal) {
+    public ResponseEntity<List<MemberInfoResponseDto>> searchMembers(@RequestBody MemberSearchRequestDto requestDto, Principal principal) {
         log.info("MemberController.searchMember() called");
 
         long memberId = Long.parseLong(principal.getName());

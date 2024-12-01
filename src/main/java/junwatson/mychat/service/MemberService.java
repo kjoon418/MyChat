@@ -259,7 +259,7 @@ public class MemberService {
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> searchFriendsByCondition(Member member, SearchMemberRequestDto requestDto) {
+    public List<MemberInfoResponseDto> searchFriendsByCondition(Member member, MemberSearchRequestDto requestDto) {
         log.info("MemberService.searchFriendsByCondition() called");
 
         // 조건에 부합하는 친구 검색
@@ -271,7 +271,7 @@ public class MemberService {
                 .toList();
     }
 
-    public List<MemberInfoResponseDto> searchMembersByCondition(Member member, SearchMemberRequestDto requestDto) {
+    public List<MemberInfoResponseDto> searchMembersByCondition(Member member, MemberSearchRequestDto requestDto) {
         log.info("MemberService.searchMembersByCondition() called");
 
         MemberSearchCondition condition = requestDto.toCondition();

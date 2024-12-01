@@ -12,7 +12,7 @@ import static lombok.AccessLevel.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = PUBLIC)
-public class SearchMemberRequestDto {
+public class MemberSearchRequestDto {
 
     private String name;
     private String email;
