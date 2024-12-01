@@ -5,6 +5,7 @@ import junwatson.mychat.dto.request.MemberSignInRequestDto;
 import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.dto.request.MemberSignUpRequestDto;
 import junwatson.mychat.dto.response.ReissueAccessTokenResponseDto;
+import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.service.GoogleLoginService;
 import junwatson.mychat.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 public class AuthorizationController {
 
+    private final TokenProvider tokenProvider;
     private final GoogleLoginService googleLoginService;
     private final MemberService memberService;
 
@@ -36,7 +38,8 @@ public class AuthorizationController {
     public ResponseEntity<ReissueAccessTokenResponseDto> reissueAccessToken(HttpServletRequest request) {
         log.info("AuthorizationController.reissueAccessToken() called");
 
-        ReissueAccessTokenResponseDto responseDto = memberService.reissueAccessToken(request);
+        String refreshTokenString = tokenProvider.resolveToken(request);
+        ReissueAccessTokenResponseDto responseDto = memberService.reissueAccessToken(refreshTokenString);
 
         return ResponseEntity.ok(responseDto);
     }

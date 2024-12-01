@@ -172,24 +172,23 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public ReissueAccessTokenResponseDto reissueAccessToken(HttpServletRequest request) {
+    public ReissueAccessTokenResponseDto reissueAccessToken(String refreshTokenString) {
         log.info("MemberService.reissueAccessToken() called");
 
         // 유효성 검사
-        String token = tokenProvider.resolveToken(request);
-        Member member = memberRepository.findById(Long.parseLong(tokenProvider.parseClaims(token).getSubject()))
+        Member member = memberRepository.findById(Long.parseLong(tokenProvider.parseClaims(refreshTokenString).getSubject()))
                 .orElseThrow(() -> new MemberNotExistsException("해당 토큰으로 회원을 조회할 수 없습니다."));
-        if (!refreshTokenDao.isValidateRefreshToken(member, token)) {
+        if (!refreshTokenDao.isValidateRefreshToken(member, refreshTokenString)) {
             throw new IllegalRefreshTokenException("부적절한 리프레시 토큰입니다.");
         }
 
         // 엑세스 토큰 생성
-        String accessToken = tokenProvider.createAccessToken(member);
+        String accessTokenString = tokenProvider.createAccessToken(member);
 
-        return ReissueAccessTokenResponseDto.from(token);
+        return ReissueAccessTokenResponseDto.from(accessTokenString);
     }
 
-    public MemberInfoResponseDto createFriendship(MemberInfoRequestDto requestDto, Member member) {
+    public MemberInfoResponseDto createFriendship(Member member, MemberInfoRequestDto requestDto) {
         log.info("MemberService.createFriendship() called");
 
         String friendEmail = requestDto.getEmail();
