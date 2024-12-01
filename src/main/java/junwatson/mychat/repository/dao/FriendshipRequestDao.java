@@ -40,10 +40,18 @@ public class FriendshipRequestDao {
         log.info("FriendshipRequestDao.removeRequest() called");
 
         fromMember.getSentFriendshipRequests().stream()
-                .filter((request) -> request.getResponseMember().equals(toMember))
+                .filter(friendshipRequest -> friendshipRequest.getResponseMember().equals(toMember))
                 .findAny()
                 .ifPresent(friendshipRequest -> {
                     fromMember.getSentFriendshipRequests()
+                            .remove(friendshipRequest);
+                });
+
+        toMember.getReceivedFriendshipRequests().stream()
+                .filter(friendshipRequest -> friendshipRequest.getRequestMember().equals(fromMember))
+                .findAny()
+                .ifPresent(friendshipRequest -> {
+                    toMember.getReceivedFriendshipRequests()
                             .remove(friendshipRequest);
                 });
     }
