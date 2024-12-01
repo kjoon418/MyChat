@@ -15,4 +15,5 @@ import static lombok.AccessLevel.PUBLIC;
 public class MemberIntegrationRequestDto {
 
     private String password;
+
 }
