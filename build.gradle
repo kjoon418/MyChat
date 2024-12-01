@@ -52,8 +52,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 
     // Websocket
-    implementation 'org.springframework.boot:spring-starter-web'
-    implementation 'org.springframework.boot:spring-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {
