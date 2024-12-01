@@ -72,7 +72,7 @@ public class MemberController {
 
         long memberId = Long.parseLong(principal.getName());
         Member member = memberService.findById(memberId);
-        MemberInfoResponseDto responseDto = memberService.createFriendship(member, requestDto);
+        MemberInfoResponseDto responseDto = memberService.createFriendshipRequest(member, requestDto);
 
         return ResponseEntity.status(CREATED).body(responseDto);
     }

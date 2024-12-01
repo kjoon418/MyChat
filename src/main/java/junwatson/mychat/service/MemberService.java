@@ -1,6 +1,5 @@
 package junwatson.mychat.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import junwatson.mychat.domain.Blacklist;
 import junwatson.mychat.domain.Friendship;
 import junwatson.mychat.domain.FriendshipRequest;
@@ -188,7 +187,7 @@ public class MemberService {
         return ReissueAccessTokenResponseDto.from(accessTokenString);
     }
 
-    public MemberInfoResponseDto createFriendship(Member member, MemberInfoRequestDto requestDto) {
+    public MemberInfoResponseDto createFriendshipRequest(Member member, MemberInfoRequestDto requestDto) {
         log.info("MemberService.createFriendship() called");
 
         String friendEmail = requestDto.getEmail();
