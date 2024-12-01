@@ -2,6 +2,7 @@ package junwatson.mychat.controller;
 
 import junwatson.mychat.exception.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -27,7 +28,8 @@ public class MyChatExceptionHandler {
                 e instanceof ChatRoomNotExistsException) {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
-        if (e instanceof SQLIntegrityConstraintViolationException) {
+        if (e instanceof SQLIntegrityConstraintViolationException ||
+                e instanceof DataIntegrityViolationException) {
             return ResponseEntity.status(BAD_REQUEST).body("다른 사용자가 이미 사용하고 있는 값이거나, 이미 처리된 요청입니다.");
         }
 
