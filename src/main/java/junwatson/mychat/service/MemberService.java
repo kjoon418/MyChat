@@ -31,7 +31,7 @@ import java.util.Set;
 @Slf4j
 public class MemberService {
 
-    private final HashSet<Character> allowedWords = new HashSet<>(Set.of('!', '@', '#', '$', '%', '^', '&', '~', '.'));
+    private final HashSet<Character> allowedWords = new HashSet<>(Set.of('!', '@', '#', '$', '%', '^', '&', '~', '.', '_'));
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
