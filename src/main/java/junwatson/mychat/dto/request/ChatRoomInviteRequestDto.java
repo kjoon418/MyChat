@@ -1,16 +1,18 @@
 package junwatson.mychat.dto.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static lombok.AccessLevel.PRIVATE;
-import static lombok.AccessLevel.PROTECTED;
+import static lombok.AccessLevel.*;
 
 @Getter
-@NoArgsConstructor(access = PROTECTED)
+@Builder
+@AllArgsConstructor(access = PUBLIC)
 public class ChatRoomInviteRequestDto {
 
     private Long id;

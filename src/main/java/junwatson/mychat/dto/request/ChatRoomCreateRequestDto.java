@@ -1,6 +1,8 @@
 package junwatson.mychat.dto.request;
 
 import junwatson.mychat.domain.ChatRoom;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,9 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
+import static lombok.AccessLevel.PUBLIC;
 
 @Getter
-@NoArgsConstructor(access = PROTECTED)
+@Builder
+@AllArgsConstructor(access = PUBLIC)
 public class ChatRoomCreateRequestDto {
 
     private String name;

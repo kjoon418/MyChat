@@ -1,11 +1,12 @@
 package junwatson.mychat.util;
 
 import io.jsonwebtoken.Claims;
+import jakarta.persistence.EntityManager;
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.dto.request.MemberSignUpRequestDto;
 import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.jwt.TokenProvider;
 import junwatson.mychat.service.MemberService;
-import junwatson.mychat.testdto.TestMemberSignUpRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,8 +43,8 @@ public class TestUtils {
     /**
      * 정상적인 회원을 회원가입 시키는 메서드
      */
-    public Member createSignUpMember(String extraEmail) {
-        TokenDto tokenDto = memberService.signUp(TestMemberSignUpRequestDto.builder()
+    public Member createTestMember(String extraEmail) {
+        TokenDto tokenDto = memberService.signUp(MemberSignUpRequestDto.builder()
                 .email("helloImTestMember@testemail.com" + extraEmail)
                 .name("testMember")
                 .password("testPassword")
@@ -53,5 +54,13 @@ public class TestUtils {
         long memberId = Long.parseLong(claims.getSubject());
 
         return memberService.findById(memberId);
+    }
+
+    /**
+     * 영속성 컨텍스트를 비우는 메서드
+     */
+    public void clearEntityManager(EntityManager em) {
+        em.flush();
+        em.clear();
     }
 }
