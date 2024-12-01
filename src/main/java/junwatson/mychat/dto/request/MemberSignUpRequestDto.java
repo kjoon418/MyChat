@@ -15,6 +15,7 @@ import static lombok.AccessLevel.PUBLIC;
  */
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor(access = PUBLIC)
 public class MemberSignUpRequestDto {
 

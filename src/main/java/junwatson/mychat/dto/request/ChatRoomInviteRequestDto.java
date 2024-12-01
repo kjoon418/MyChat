@@ -12,6 +12,7 @@ import static lombok.AccessLevel.*;
 
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor(access = PUBLIC)
 public class ChatRoomInviteRequestDto {
 
