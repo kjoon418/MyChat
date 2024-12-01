@@ -225,7 +225,7 @@ public class MemberService {
 
         // 유효성 검사
         Member friend = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotExistsException("대상 회원과 친구가 아닙니다."));
+                .orElseThrow(() -> new MemberNotExistsException("대상 회원이 존재하지 않습니다."));
 
         // 친구 삭제
         friendshipDao.removeFriendship(member, friend);
