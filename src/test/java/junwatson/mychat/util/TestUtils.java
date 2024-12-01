@@ -3,6 +3,7 @@ package junwatson.mychat.util;
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityManager;
 import junwatson.mychat.domain.Member;
+import junwatson.mychat.dto.request.MemberInfoRequestDto;
 import junwatson.mychat.dto.request.MemberSignUpRequestDto;
 import junwatson.mychat.dto.response.TokenDto;
 import junwatson.mychat.jwt.TokenProvider;
@@ -43,10 +44,10 @@ public class TestUtils {
     /**
      * 정상적인 회원을 회원가입 시키는 메서드
      */
-    public Member createTestMember(String extraEmail) {
+    public Member createTestMember(String extraEmail, String extraName) {
         TokenDto tokenDto = memberService.signUp(MemberSignUpRequestDto.builder()
                 .email("helloImTestMember@testemail.com" + extraEmail)
-                .name("testMember")
+                .name("testName" + extraName)
                 .password("testPassword")
                 .profileUrl("testProfileUrl")
                 .build());
@@ -57,10 +58,48 @@ public class TestUtils {
     }
 
     /**
+     * 회원 여려명을 회원가입 시키는 메서드<br>
+     * TEST_EMAIL_01234, TEST_NAME_01234 형식으로 생성된다
+     */
+    public Member[] createTestMembers(int count) {
+        Member[] members = new Member[count];
+        StringBuilder extraEmail = new StringBuilder("TEST_EMAIL_");
+        StringBuilder extraName = new StringBuilder("TEST_NAME_");
+
+        for (int i = 0; i < count; i++) {
+            extraEmail.append(i);
+            extraName.append(i);
+            members[i] = createTestMember(extraEmail.toString(), extraName.toString());
+        }
+
+        return members;
+    }
+
+    /**
      * 영속성 컨텍스트를 비우는 메서드
      */
     public void clearEntityManager(EntityManager em) {
         em.flush();
         em.clear();
+    }
+
+    /**
+     * 두 Member 엔티티를 친구 관계로 등록하는 메서드<br>
+     * EntityManager를 비운다는 것에 주의할 것
+     */
+    public void makeFriends(Member member1, Member member2, EntityManager em) {
+        clearEntityManager(em);
+
+        Member memberA = memberService.findById(member1.getId());
+        memberService.createFriendshipRequest(memberA, MemberInfoRequestDto.builder()
+                .email(member2.getEmail())
+                .build());
+        clearEntityManager(em);
+
+        Member memberB = memberService.findById(member2.getId());
+        memberService.createFriendshipRequest(memberB, MemberInfoRequestDto.builder()
+                .email(member1.getEmail())
+                .build());
+        clearEntityManager(em);
     }
 }
