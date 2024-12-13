@@ -30,6 +30,9 @@ public class ChatRoomCreateRequestDto {
     }
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class Friend {
         private String email;
     }
