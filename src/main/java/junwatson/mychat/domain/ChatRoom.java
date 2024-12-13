@@ -22,7 +22,6 @@ public class ChatRoom {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
     private String profileUrl;
 
