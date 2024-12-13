@@ -46,6 +46,9 @@ public class ChatRoomService {
             members.add(memberRepository.findByEmail(friend.getEmail())
                     .orElseThrow(() -> new MemberNotExistsException("해당 이메일을 지닌 회원이 존재하지 않습니다: " + friend.getEmail())));
         }
+        if (members.isEmpty()) {
+            throw new IllegalArgumentException("다른 회원 잆이 채팅방을 만들 수 없습니다.");
+        }
 
         // 각 회원을 채팅방에 참여시킴
         StringBuilder systemChatBuilder = new StringBuilder("새로운 채팅방이 생성되었습니다. 구성원: " + requsetMember.getName() + ", ");
