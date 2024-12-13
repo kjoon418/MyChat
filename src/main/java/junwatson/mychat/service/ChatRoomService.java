@@ -1,11 +1,13 @@
 package junwatson.mychat.service;
 
+import junwatson.mychat.domain.Blacklist;
 import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.domain.MemberChatRoom;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
+import junwatson.mychat.exception.BlockException;
 import junwatson.mychat.exception.ChatRoomNotExistsException;
 import junwatson.mychat.exception.IllegalMemberStateException;
 import junwatson.mychat.exception.MemberNotExistsException;
@@ -38,20 +40,34 @@ public class ChatRoomService {
         log.info("ChatRoomService.createChatRoom() called");
 
         ChatRoom chatRoom = chatRoomRepository.save(requestDto.toEntity());
-        MemberChatRoom memberChatRoom = memberChatRoomDao.createMemberChatRoom(requsetMember, chatRoom);
 
         // 유효성 검사 및 requestDto를 통해 회원 조회
-        List<Member> members = new ArrayList<>();
-        for (ChatRoomCreateRequestDto.Friend friend : requestDto.getFriends()) {
-            members.add(memberRepository.findByEmail(friend.getEmail())
-                    .orElseThrow(() -> new MemberNotExistsException("해당 이메일을 지닌 회원이 존재하지 않습니다: " + friend.getEmail())));
-        }
-        if (members.isEmpty()) {
+        if (requestDto.getFriends().isEmpty()) {
             throw new IllegalArgumentException("다른 회원 잆이 채팅방을 만들 수 없습니다.");
         }
 
+        List<Member> members = new ArrayList<>();
+        members.add(requsetMember);
+        for (ChatRoomCreateRequestDto.Friend friend : requestDto.getFriends()) {
+            Member member = memberRepository.findByEmail(friend.getEmail())
+                    .orElseThrow(() -> new MemberNotExistsException("해당 이메일을 지닌 회원이 존재하지 않습니다: " + friend.getEmail()));
+
+            if (members.contains(member) || member.equals(requsetMember)) {
+                throw new IllegalArgumentException("회원 정보가 중복되었습니다.");
+            }
+            if (isBlocked(requsetMember, member)) {
+                throw new BlockException("나를 차단한 회원입니다.");
+            }
+            // 차단한 회원과 채팅방을 만드려 할 경우 프론트 측에서 경고창을 띄울 수 있도록 알림
+            if (hasBlock(requsetMember, member)) {
+                throw new BlockException("내가 차단한 회원입니다: " + member.getEmail());
+            }
+
+            members.add(member);
+        }
+
         // 각 회원을 채팅방에 참여시킴
-        StringBuilder systemChatBuilder = new StringBuilder("새로운 채팅방이 생성되었습니다. 구성원: " + requsetMember.getName() + ", ");
+        StringBuilder systemChatBuilder = new StringBuilder("새로운 채팅방이 생성되었습니다. 구성원: ");
         for (Member member : members) {
             memberChatRoomDao.createMemberChatRoom(member, chatRoom);
             systemChatBuilder.append(member.getName()).append(", ");
@@ -61,7 +77,8 @@ public class ChatRoomService {
         systemChatBuilder.delete(systemChatBuilder.length() - 2, systemChatBuilder.length());
         chatDao.createSystemChat(chatRoom, systemChatBuilder.toString());
 
-        return ChatRoomInfoResponseDto.from(memberChatRoom);
+        return ChatRoomInfoResponseDto.from(memberChatRoomDao.findByMemberAndChatRoom(requsetMember, chatRoom)
+                .orElseThrow(() -> new RuntimeException("채팅방을 만드는 과정에서 문제가 발생했습니다.")));
     }
 
     public ChatRoom findChatRoom(ChatRoomInfoRequestDto requestDto) {
@@ -193,5 +210,23 @@ public class ChatRoomService {
         chatDao.createSystemChat(chatRoom, systemChatBuilder.toString());
 
         return ChatRoomInfoResponseDto.from(findMemberChatRoom);
+    }
+
+    /**
+     * 사용자가 해당 회원을 차단했는지 여부를 반환하는 메서드
+     */
+    private boolean hasBlock(Member fromMember, Member toMember) {
+        return fromMember.getBlacklists().stream()
+                .map(Blacklist::getTargetMember)
+                .anyMatch(targetMember -> targetMember.equals(toMember));
+    }
+
+    /**
+     * 사용자가 해당 회원에게 차단당했는지 여부를 반환하는 메서드
+     */
+    private boolean isBlocked(Member fromMember, Member toMember) {
+        return fromMember.getBlockedLists().stream()
+                .map(Blacklist::getMember)
+                .anyMatch(targetMember -> targetMember.equals(toMember));
     }
 }
