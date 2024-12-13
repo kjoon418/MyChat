@@ -34,6 +34,7 @@ public class FriendshipRequestDao {
                 .build();
 
         fromMember.getSentFriendshipRequests().add(friendshipRequest);
+        toMember.getReceivedFriendshipRequests().add(friendshipRequest);
     }
 
     public void removeFriendshipRequest(Member fromMember, Member toMember) {
