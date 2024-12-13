@@ -325,6 +325,8 @@ public class MemberService {
 
         // 차단 데이터 생성
         Blacklist blacklist = blacklistDao.createBlacklist(member, target);
+        member.getBlacklists().add(blacklist);
+        target.getBlockedLists().add(blacklist);
 
         // 만약 기존에 친구 관계였다면, 친구 관계를 삭제함
         if (friendshipDao.areFriends(member, target)) {
