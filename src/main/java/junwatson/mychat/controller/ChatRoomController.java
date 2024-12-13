@@ -25,7 +25,6 @@ import static org.springframework.http.HttpStatus.*;
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
-    private final MemberService memberService;
     private final ControllerUtil util;
 
     @PostMapping
@@ -83,7 +82,7 @@ public class ChatRoomController {
         log.info("ChatRoomController.findMembersByChatRoom() called");
 
         Member member = util.findMemberByPrincipal(principal);
-        ChatRoom chatRoom = chatRoomService.findChatRoomById(requestDto.getId());
+        ChatRoom chatRoom = chatRoomService.findChatRoom(requestDto);
         List<MemberInfoResponseDto> responseDto = chatRoomService.findMembersInChatRoom(member, chatRoom);
 
         return ResponseEntity.ok(responseDto);

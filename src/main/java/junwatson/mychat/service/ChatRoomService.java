@@ -61,10 +61,10 @@ public class ChatRoomService {
         return ChatRoomInfoResponseDto.from(memberChatRoom);
     }
 
-    public ChatRoom findChatRoomById(Long id) {
+    public ChatRoom findChatRoom(ChatRoomInfoRequestDto requestDto) {
         log.info("ChatRoomService.findChatRoomById() called");
 
-        return chatRoomRepository.findById(id)
+        return chatRoomRepository.findById(requestDto.getId())
                 .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
     }
 
