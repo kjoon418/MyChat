@@ -27,13 +27,13 @@ public class ChatController {
 
     private final MemberService memberService;
     private final ChatService chatService;
+    private final ControllerUtil util;
 
     @PostMapping
     public ResponseEntity<ChatInfoResponseDto> createChat(@RequestBody ChatCreateRequestDto requestDto, Principal principal) {
         log.info("ChatController.createChat() called");
 
-        long memberId = Long.parseLong(principal.getName());
-        Member member = memberService.findById(memberId);
+        Member member = util.findMemberByPrincipal(principal);
         ChatInfoResponseDto responseDto = chatService.createUserChat(member, requestDto);
 
         return ResponseEntity.status(CREATED).body(responseDto);
@@ -43,8 +43,7 @@ public class ChatController {
     public ResponseEntity<List<ChatInfoResponseDto>> findChats(@RequestBody ChatRoomInfoRequestDto requestDto, Principal principal) {
         log.info("ChatController.findChats() called");
 
-        long memberId = Long.parseLong(principal.getName());
-        Member member = memberService.findById(memberId);
+        Member member = util.findMemberByPrincipal(principal);
         List<ChatInfoResponseDto> responseDto = chatService.readChats(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
@@ -54,8 +53,7 @@ public class ChatController {
     public ResponseEntity<ChatInfoResponseDto> deleteChat(@RequestBody ChatInfoRequestDto requestDto, Principal principal) {
         log.info("ChatController.deleteChat() called");
 
-        long memberId = Long.parseLong(principal.getName());
-        Member member = memberService.findById(memberId);
+        Member member = util.findMemberByPrincipal(principal);
         ChatInfoResponseDto responseDto = chatService.deleteChat(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
@@ -65,8 +63,7 @@ public class ChatController {
     public ResponseEntity<List<ChatInfoResponseDto>> searchChats(@RequestBody ChatSearchRequestDto requestDto, Principal principal) {
         log.info("ChatController.searchChats() called");
 
-        long memberId = Long.parseLong(principal.getName());
-        Member member = memberService.findById(memberId);
+        Member member = util.findMemberByPrincipal(principal);
         List<ChatInfoResponseDto> responseDto = chatService.searchChats(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
