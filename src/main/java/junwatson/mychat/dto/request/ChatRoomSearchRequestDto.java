@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import static lombok.AccessLevel.PUBLIC;
 
@@ -17,6 +18,8 @@ public class ChatRoomSearchRequestDto {
     private String name;
 
     public MemberChatRoomSearchCondition toCondition() {
+        String name = StringUtils.hasText(this.name) ? this.name : "";
+
         return MemberChatRoomSearchCondition.builder()
                 .name(name)
                 .build();
