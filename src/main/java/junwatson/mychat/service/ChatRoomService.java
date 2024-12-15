@@ -81,13 +81,6 @@ public class ChatRoomService {
                 .orElseThrow(() -> new RuntimeException("채팅방을 만드는 과정에서 문제가 발생했습니다.")));
     }
 
-    public ChatRoom findChatRoom(ChatRoomInfoRequestDto requestDto) {
-        log.info("ChatRoomService.findChatRoomById() called");
-
-        return chatRoomRepository.findById(requestDto.getId())
-                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
-    }
-
     public List<ChatRoomInfoResponseDto> findChatRooms(Member member) {
         log.info("ChatRoomService.findChatRooms() called");
 
@@ -111,27 +104,6 @@ public class ChatRoomService {
         return memberChatRooms.stream()
                 .map(ChatRoomInfoResponseDto::from)
                 .toList();
-    }
-
-    public List<MemberInfoResponseDto> findMembersInChatRoom(Member requestMember, ChatRoom chatRoom) {
-        log.info("ChatRoomService.findMembersInChatRoom() called");
-
-        // 유효성 검사
-        memberChatRoomDao.findByMemberAndChatRoom(requestMember, chatRoom)
-                .orElseThrow(() -> new IllegalMemberStateException("해당 채팅방에 소속되어 있지 않습니다."));
-
-        // 해당 채팅방에 참여하고 있는 모든 회원 조회
-        List<Member> members = chatRoom.getMemberChatRooms().stream()
-                .map(MemberChatRoom::getMember)
-                .toList();
-
-        // 엔티티를 DTO로 변환
-        List<MemberInfoResponseDto> responseDto = new ArrayList<>();
-        for (Member member : members) {
-            responseDto.add(MemberInfoResponseDto.from(member));
-        }
-
-        return responseDto;
     }
 
     /**

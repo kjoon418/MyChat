@@ -1,9 +1,6 @@
 package junwatson.mychat.service;
 
-import junwatson.mychat.domain.Blacklist;
-import junwatson.mychat.domain.Friendship;
-import junwatson.mychat.domain.FriendshipRequest;
-import junwatson.mychat.domain.Member;
+import junwatson.mychat.domain.*;
 import junwatson.mychat.domain.type.MemberAuthorizationType;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.MemberInfoResponseDto;
@@ -21,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +38,7 @@ public class MemberService {
     private final RefreshTokenDao refreshTokenDao;
     private final FriendshipDao friendshipDao;
     private final FriendshipRequestDao friendshipRequestDao;
+    private final MemberChatRoomDao memberChatRoomDao;
 
     public TokenDto signUp(MemberSignUpRequestDto requestDto) {
         log.info("MemberService.signUp() called");
@@ -257,6 +256,29 @@ public class MemberService {
                 .map(Friendship::getFriendMember)
                 .map(MemberInfoResponseDto::from)
                 .toList();
+    }
+
+    public List<MemberInfoResponseDto> findMembersInChatRoom(Member requestMember, ChatRoomInfoRequestDto requestDto) {
+        log.info("MemberService.findMembersInChatRoom() called");
+
+        // 유효성 검사
+        ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getId())
+                .orElseThrow(() -> new ChatRoomNotExistsException("해당 채팅방이 존재하지 않습니다."));
+        memberChatRoomDao.findByMemberAndChatRoom(requestMember, chatRoom)
+                .orElseThrow(() -> new IllegalMemberStateException("해당 채팅방에 소속되어 있지 않습니다."));
+
+        // 해당 채팅방에 참여하고 있는 모든 회원 조회
+        List<Member> members = chatRoom.getMemberChatRooms().stream()
+                .map(MemberChatRoom::getMember)
+                .toList();
+
+        // 엔티티를 DTO로 변환
+        List<MemberInfoResponseDto> responseDto = new ArrayList<>();
+        for (Member member : members) {
+            responseDto.add(MemberInfoResponseDto.from(member));
+        }
+
+        return responseDto;
     }
 
     public List<MemberInfoResponseDto> searchFriendsByCondition(Member member, MemberSearchRequestDto requestDto) {

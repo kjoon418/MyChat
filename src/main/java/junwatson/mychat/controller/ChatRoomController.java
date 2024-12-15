@@ -1,12 +1,9 @@
 package junwatson.mychat.controller;
 
-import junwatson.mychat.domain.ChatRoom;
 import junwatson.mychat.domain.Member;
 import junwatson.mychat.dto.request.*;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
-import junwatson.mychat.dto.response.MemberInfoResponseDto;
 import junwatson.mychat.service.ChatRoomService;
-import junwatson.mychat.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @Controller
 @RequiredArgsConstructor
@@ -73,17 +70,6 @@ public class ChatRoomController {
 
         Member member = util.findMemberByPrincipal(principal);
         ChatRoomInfoResponseDto responseDto = chatRoomService.inviteChatRoom(member, requestDto);
-
-        return ResponseEntity.ok(responseDto);
-    }
-
-    @GetMapping("/members")
-    public ResponseEntity<List<MemberInfoResponseDto>> findMembersByChatRoom(@RequestBody ChatRoomInfoRequestDto requestDto, Principal principal) {
-        log.info("ChatRoomController.findMembersByChatRoom() called");
-
-        Member member = util.findMemberByPrincipal(principal);
-        ChatRoom chatRoom = chatRoomService.findChatRoom(requestDto);
-        List<MemberInfoResponseDto> responseDto = chatRoomService.findMembersInChatRoom(member, chatRoom);
 
         return ResponseEntity.ok(responseDto);
     }

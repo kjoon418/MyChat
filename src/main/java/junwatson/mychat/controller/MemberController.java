@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,6 +59,16 @@ public class MemberController {
 
         Member member = util.findMemberByPrincipal(principal);
         MemberInfoResponseDto responseDto = memberService.integrate(member, requestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/room")
+    public ResponseEntity<List<MemberInfoResponseDto>> findMembersByChatRoom(@RequestBody ChatRoomInfoRequestDto requestDto, Principal principal) {
+        log.info("MemberController.findMembersByChatRoom() called");
+
+        Member member = util.findMemberByPrincipal(principal);
+        List<MemberInfoResponseDto> responseDto = memberService.findMembersInChatRoom(member, requestDto);
 
         return ResponseEntity.ok(responseDto);
     }
