@@ -24,9 +24,7 @@ public class ChatRoomCreateRequestDto {
     private final List<Friend> friends = new ArrayList<>();
 
     public ChatRoom toEntity() {
-        if (!StringUtils.hasText(name)) {
-            name = null;
-        }
+        String name = StringUtils.hasText(this.name) ? this.name : null;
 
         return ChatRoom.builder()
                 .name(name)
