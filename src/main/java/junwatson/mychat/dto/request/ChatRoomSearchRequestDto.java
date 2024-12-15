@@ -18,7 +18,7 @@ public class ChatRoomSearchRequestDto {
     private String name;
 
     public MemberChatRoomSearchCondition toCondition() {
-        String name = StringUtils.hasText(this.name) ? this.name : "";
+        String name = StringUtils.hasText(this.name) ? this.name : null;
 
         return MemberChatRoomSearchCondition.builder()
                 .name(name)

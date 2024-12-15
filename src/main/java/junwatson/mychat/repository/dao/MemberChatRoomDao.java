@@ -52,11 +52,18 @@ public class MemberChatRoomDao {
     public List<MemberChatRoom> filterWithCondition(List<MemberChatRoom> memberChatRooms, MemberChatRoomSearchCondition condition) {
         log.info("MemberChatRoomDao.filterWithCondition() called");
 
+        // 조건이 없다면 모든 채팅방 반환
+        if (!StringUtils.hasText(condition.getName())) {
+            return memberChatRooms.stream().toList();
+        }
+
         return memberChatRooms.stream()
                 .filter(memberChatRoom -> {
+                    // 채팅방 별명이 있다면 별명으로 검색
                     if (StringUtils.hasText(memberChatRoom.getAliasName())) {
                         return memberChatRoom.getAliasName().contains(condition.getName());
                     }
+                    // 별명이 없다면 조건으로 검색
                     return memberChatRoom.getChatRoom()
                             .getName()
                             .contains(condition.getName());
