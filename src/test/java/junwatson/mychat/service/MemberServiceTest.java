@@ -33,8 +33,6 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 class MemberServiceTest {
 
-    private static final String BASIC_EMAIL = "";
-    private static final String BASIC_NAME = "";
     private static final String NOT_EXISTS_EMAIL = "asdc897ssa9d78cs7dc8ia5s8dc@testEmail.com";
     private static final String NOT_EXISTS_PASSWORD = "3212b1jhb1324kl4312n4g1j412j4b132134";
 
@@ -244,7 +242,7 @@ class MemberServiceTest {
     @DisplayName("로그인: 정상")
     void login_success() {
         // given: 테스트용 멥버 회원가입
-        Member member = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member member = utils.createTestMember();
         utils.clearEntityManager(em);
         
 
@@ -262,7 +260,7 @@ class MemberServiceTest {
     @DisplayName("로그인: 잘못된 이메일, 비밀번호 예외")
     void login_illegalEmailOrPassword() {
         // given: 회원 가입
-        Member member = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member member = utils.createTestMember();
         utils.clearEntityManager(em);
 
         // case1: 잘못된 이메일로 로그인
@@ -284,7 +282,7 @@ class MemberServiceTest {
     @DisplayName("로그인: 다른 곳에서 로그인시 리프레쉬 토큰 무효화")
     void login_invalidateToken() throws InterruptedException {
         // given: 테스트용 멤버 회원가입
-        Member member = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member member = utils.createTestMember();
 
         // when: 테스트용 멤버를 2번 로그인시킴
         TokenDto tokenDto1 = memberService.signIn(MemberSignInRequestDto.builder()
@@ -310,7 +308,7 @@ class MemberServiceTest {
     @DisplayName("엑세스 토큰 재발급: 성공")
     void reissue_success() {
         // given: 회원 가입 및 토큰 획득
-        Member signUpMember = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member signUpMember = utils.createTestMember();
         TokenDto tokenDto = memberService.signIn(MemberSignInRequestDto.builder()
                 .email(signUpMember.getEmail())
                 .password(signUpMember.getPassword())
@@ -330,7 +328,7 @@ class MemberServiceTest {
     @DisplayName("로그아웃: 성공")
     void logout_success() {
         // given: 회원 생성
-        Member member = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member member = utils.createTestMember();
         utils.clearEntityManager(em);
 
         // case1: 로그아웃 전 리프레쉬 토큰 통과
@@ -346,7 +344,7 @@ class MemberServiceTest {
     @DisplayName("회원 삭제: 성공")
     void withdraw_success() {
         // given
-        Member signUpMember = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member signUpMember = utils.createTestMember();
         utils.clearEntityManager(em);
 
         // when: 회원 삭제
@@ -476,7 +474,7 @@ class MemberServiceTest {
     @DisplayName("친구 요청 생성: 존재하지 않는 회원 예외")
     void friendshipRequest_notExistsMember() {
         // given: 회원 생성
-        Member member = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member member = utils.createTestMember();
 
         // then: 존재하지 않는 회원에게 친구 요청 전송
         assertThatThrownBy(() -> memberService.createFriendshipRequest(member, MemberInfoRequestDto.builder()
@@ -551,7 +549,7 @@ class MemberServiceTest {
     @DisplayName("친구 생성: 자기 자신에게 요청 예외")
     void friendship_myself() {
         // given: 회원 생성
-        Member member = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member member = utils.createTestMember();
 
         // then: 자기 자신에게 친구 요청 실패
         assertThatThrownBy(() -> memberService.createFriendshipRequest(member, MemberInfoRequestDto.builder()
@@ -566,8 +564,8 @@ class MemberServiceTest {
         // given: 회원 생성 및 친구 등록
         Member signUpMember1 = utils.createTestMember("1", "A");
         Member signUpMember2 = utils.createTestMember("2", "B");
-
-        utils.makeFriends(signUpMember1, signUpMember2, em);
+        utils.makeFriends(signUpMember1, signUpMember2);
+        utils.clearEntityManager(em);
 
         // when: 친구 삭제
         Member deleteMember1 = memberService.findById(signUpMember1.getId());
@@ -598,9 +596,10 @@ class MemberServiceTest {
         utils.clearEntityManager(em);
 
         // when: 친구 등록(회원1이 회원2, 회원3, 회원4와 친구가 되게 함)
-        utils.makeFriends(testMember1, testMember2, em);
-        utils.makeFriends(testMember1, testMember3, em);
-        utils.makeFriends(testMember1, testMember4, em);
+        utils.makeFriends(testMember1, testMember2);
+        utils.makeFriends(testMember1, testMember3);
+        utils.makeFriends(testMember1, testMember4);
+        utils.clearEntityManager(em);
 
         // then: 조건 없이 검색
         Member noConditionSearch = memberService.findById(testMember1.getId());
@@ -623,9 +622,10 @@ class MemberServiceTest {
         utils.clearEntityManager(em);
 
         // when: 친구 등록(회원1이 회원2, 회원3, 회원4와 친구가 되게 함)
-        utils.makeFriends(testMember1, testMember2, em);
-        utils.makeFriends(testMember1, testMember3, em);
-        utils.makeFriends(testMember1, testMember4, em);
+        utils.makeFriends(testMember1, testMember2);
+        utils.makeFriends(testMember1, testMember3);
+        utils.makeFriends(testMember1, testMember4);
+        utils.clearEntityManager(em);
 
         // case2: 이름으로 검색
         Member nameSearchMember = memberService.findById(testMember1.getId());
@@ -658,9 +658,10 @@ class MemberServiceTest {
         utils.clearEntityManager(em);
 
         // when: 친구 등록(회원1이 회원2, 회원3, 회원4와 친구가 되게 함)
-        utils.makeFriends(testMember1, testMember2, em);
-        utils.makeFriends(testMember1, testMember3, em);
-        utils.makeFriends(testMember1, testMember4, em);
+        utils.makeFriends(testMember1, testMember2);
+        utils.makeFriends(testMember1, testMember3);
+        utils.makeFriends(testMember1, testMember4);
+        utils.clearEntityManager(em);
 
         // case3: 이메일로 검색
         Member emailSearchMember = memberService.findById(testMember1.getId());
@@ -693,9 +694,9 @@ class MemberServiceTest {
         utils.clearEntityManager(em);
 
         // when: 친구 등록(회원1이 회원2, 회원3, 회원4와 친구가 되게 함)
-        utils.makeFriends(testMember1, testMember2, em);
-        utils.makeFriends(testMember1, testMember3, em);
-        utils.makeFriends(testMember1, testMember4, em);
+        utils.makeFriends(testMember1, testMember2);
+        utils.makeFriends(testMember1, testMember3);
+        utils.makeFriends(testMember1, testMember4);
         utils.clearEntityManager(em);
 
         // case4: 이름과 이메일로 검색
@@ -740,7 +741,7 @@ class MemberServiceTest {
     @DisplayName("차단 생성: 존재하지 않는 회원 예외")
     void block_notExistsMember() {
         // given: 회원 생성
-        Member member = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member member = utils.createTestMember();
 
         // then: 차단 생성 실패
         assertThatThrownBy(() -> memberService.addBlacklist(member, MemberInfoRequestDto.builder()
@@ -753,7 +754,7 @@ class MemberServiceTest {
     @DisplayName("차단 생성: 자기 자신에게 요청 예외")
     void block_myself() {
         // given: 회원 생성
-        Member member = utils.createTestMember(BASIC_EMAIL, BASIC_NAME);
+        Member member = utils.createTestMember();
 
         // then: 자기 자신 차단 실패
         assertThatThrownBy(() -> memberService.addBlacklist(member, MemberInfoRequestDto.builder()
