@@ -8,7 +8,6 @@ import junwatson.mychat.dto.request.ChatRoomInfoRequestDto;
 import junwatson.mychat.dto.request.ChatRoomSearchRequestDto;
 import junwatson.mychat.dto.response.ChatRoomInfoResponseDto;
 import junwatson.mychat.exception.BlockException;
-import junwatson.mychat.exception.ChatRoomNotExistsException;
 import junwatson.mychat.repository.ChatRoomRepository;
 import junwatson.mychat.util.TestUtils;
 import org.junit.jupiter.api.DisplayName;

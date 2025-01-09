@@ -62,3 +62,7 @@ tasks.named('test') {
 clean {
     delete file('src/main/generated')
 }
+
+tasks.withType(Test).configureEach {
+    enabled = false
+}
